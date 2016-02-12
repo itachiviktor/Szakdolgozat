@@ -1,0 +1,97 @@
+package com.hg.muscleman;
+
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
+
+import com.hb.Game;
+import com.hb.entity.AbstractSkill;
+import com.hb.entity.Player;
+import com.hb.graphics.ImageAssets;
+
+public class Skill1 extends AbstractSkill{
+	/*Muscleman bullet buffer*/
+
+	private int angle = 0;/*A buffer folymatosan forog a player körül.*/
+	
+	public Skill1(Player player) {
+		super(player);
+		this.secWhileActive = 10;/*10 másodpercig aktív a buffer*/
+		this.cdtime = 20;/*20 sec cd ban rajta*/
+	}
+	
+	public void activateSkill(){
+		/*skillaktiválás*/
+		if(this.skillStartedMainTime + this.cdtime < Game.maintime || skillStartedMainTime == 0){
+			this.skillStartedMainTime = Game.maintime;
+			isactivated = true;
+			player.hudmanager.skill1useable = false;
+		}
+	}
+	
+	@Override
+	public void tick() {
+		/*Ha aktiválva van a skill*/
+		if(isactivated){
+			/*Ha még tart a skill, azaz legfeljebb 10 másodperc telt el a skilleltolás óta,akkor hozzáadunk a szöghöz.*/
+			if(Game.maintime - this.secWhileActive - skillStartedMainTime <= 0){
+				if(angle == 360){
+					angle = 0;
+				}else{
+					angle = angle+2;
+				}
+			}else{
+				/*Ha már letelt a 10 sec,akkor az isactivated változó legyen hamis*/
+				isactivated = false;
+			}
+		}
+		/*A cd-bõl hátralévõ idõt itt is folymatosan számoljuk,pedig ez hiba,csak akkor kellene, ha tényleg szükséges.*/
+		this.timeuntilcdend = this.skillStartedMainTime + this.cdtime - (Game.maintime);
+		
+		/*Illetve mindíg megnézi,hogy a cd lejárt-e már,mertha igen ,akkor a hudmanagernek a változóját
+		 truera kell állítani,hogy kivilágosítsa a skillképet.*/
+		if(this.skillStartedMainTime + this.cdtime < Game.maintime || skillStartedMainTime == 0){
+			player.hudmanager.skill1useable = true;
+		}
+	}
+		
+	@Override
+	public void render(Graphics g) {
+		/*Csak akkor rajzolja ki a buffot a player alá,ha acitválva van a skill, és még tart a 10 másodperc.*/
+		if(Game.maintime - this.secWhileActive - skillStartedMainTime <= 0 && this.isactivated){
+			
+			Graphics2D g2d = (Graphics2D) g;
+		    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+		          RenderingHints.VALUE_ANTIALIAS_ON);
+		    
+		    AffineTransform old = g2d.getTransform();
+		    /*a player közepe körül forgatunk*/
+		    g2d.rotate(Math.toRadians(angle), (int)player.x + player.width/2 ,(int)player.y + player.height/2);
+		    /*Animáljuk a buffot*/
+		    if(framePerSec < 5){
+				if(frame<10){
+					g.drawImage(ImageAssets.musclemanpoewrbuff[frame].getBufferedImage(),  (int)player.x - player.width/2, (int)player.y - player.height/2, 128,128,null);
+				}
+				framePerSec++;
+			}else{
+				framePerSec = 0;
+				if(frame<10){
+					g.drawImage(ImageAssets.musclemanpoewrbuff[frame].getBufferedImage(),  (int)player.x - player.width/2, (int)player.y - player.height/2, 128,128,null);
+					frame++;
+					
+				}else{
+					frame = 0;
+					g.drawImage(ImageAssets.musclemanpoewrbuff[frame].getBufferedImage(),  (int)player.x - player.width/2, (int)player.y - player.height/2, 128,128,null);
+				}
+			}
+		    g2d.setTransform(old);
+		}
+	}
+
+	@Override
+	public Rectangle getBounds() {
+		return null;
+	}
+}
