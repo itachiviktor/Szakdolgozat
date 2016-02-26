@@ -79,7 +79,7 @@ public class Bolt {
 			   
 			   damagingNow = true;/*most sebezhet a skill*/
 			   animaionStillRuning = true;/*most már kirajzolhatjuk az animációt.*/
-			   player.hudmanager.skill0useable = false;/*A skillkép elsõtétül,hisz cd kerül a skillre*/
+			   player.monitorScreenmanager.skill0useable = false;/*A skillkép elsõtétül,hisz cd kerül a skillre*/
 			}
 	   }
 	   
@@ -225,7 +225,7 @@ public class Bolt {
 				 stb.. is kelll),mert ha nincs akkor a skill1useable true legyen a hudmanagerben,azaz a kis skillkép
 				 legyen kivilágítva.(skill1 azaz ez a bolt a használójának az elsõ skillje)*/
 				if(this.skillStartedMainTime + this.cdtime < Game.maintime || skillStartedMainTime == 0){
-					player.hudmanager.skill0useable = true;
+					player.monitorScreenmanager.skill0useable = true;
 				}
 		   }   
 }

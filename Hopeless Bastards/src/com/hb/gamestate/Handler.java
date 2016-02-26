@@ -26,6 +26,7 @@ import com.hb.items.ManaPotion;
 import com.hb.tile.Tile;
 import com.hb.tile.Wall;
 import com.hb.tile.WallType;
+import com.hg.muscleman.Muscleman;
 
 public class Handler extends GameState {
 	/*Ez az osztály egy játékállás, méghozzá a játéké.Tehát a karakterek itt mozogbak stb.....*/
@@ -313,7 +314,7 @@ public class Handler extends GameState {
 				
 				else if(red == 0 && green == 0 && blue == 255){
 					/*teljesen kék pixel*/
-					addEntity(new Player(x*63,y*63,63,63,Id.PLAYER,this));
+					addEntity(new Muscleman(x*63,y*63,63,63,Id.PLAYER,this));
 					addTile(new Wall(x*64,y*64,64,64,false,Id.WALL,WallType.FOLD,this));
 				}
 				

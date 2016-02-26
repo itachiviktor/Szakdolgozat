@@ -12,7 +12,7 @@ import com.hb.Game;
 import com.hb.entity.Player;
 import com.hb.graphics.ImageAssets;
 
-public class HUDmanager {
+public class MonitorScreenManager {
 	/*Ez az osztály a játékon belül a felsõ és alsó területekért felelõs,hogy azok is mindíg a playerrel motogjanak.
 	 Itt a healthbarra és a skillbarra érdemes gondolni.Még az inventory nincs itt,de ide kell ,hogy kerüljön.*/
 	
@@ -40,7 +40,7 @@ public class HUDmanager {
 	private Font betutipus = new Font("Arial",Font.PLAIN,20);
 	
 	
-	public HUDmanager(Player player) {
+	public MonitorScreenManager(Player player) {
 		this.player = player;
 		/*Itt beállítom a skillképek helyzetét, a rectangleben, a rectangle objektum fogja képviselni a helyüket.
 		 Ebbe az a jó,hogy minden képernyõn ugyan oda teszi.*/

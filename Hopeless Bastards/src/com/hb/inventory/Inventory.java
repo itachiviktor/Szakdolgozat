@@ -20,7 +20,7 @@ public class Inventory {
 	public Inventory(int x,int y,int dimension,Handler handler) {
 		this.x = x;
 		this.y = y;
-		this.dimension = dimension;/*hányszor hanyas mátrixot repreuentál az inventory (6x6)*/
+		this.dimension = dimension;/*hányszor hanyas mátrixot reprezentál az inventory (6x6)*/
 		this.handler = handler;
 		
 	}

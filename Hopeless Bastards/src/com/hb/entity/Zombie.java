@@ -19,6 +19,7 @@ import com.hb.math.RotateViktor;
 
 public class Zombie extends Entity{
 	private Player player = null;
+	
 	private double velocityX;
 	private double velocityY;
 	private int moveframePerSec = 0;
@@ -38,7 +39,9 @@ public class Zombie extends Entity{
 	private boolean dead= false;
 	private boolean live = true;
 	private double angle = 0;
-	private boolean bleeding = false;
+	private boolean bleeding = false;/*Ez a változó ahhoz kell, hogy a karakter vérzõ animációt le kell-e rajta
+	játtszani.*/
+	
 	private double speed;
 	private Random doublerandom;
 	private Random intrandom;
@@ -81,6 +84,7 @@ public class Zombie extends Entity{
 			          y + height / 2);
 		    
 		    if(!attacking){
+		    	/*Ha támadhat a zombie,akkor a támadó animáció lejáttszása.*/
 		    	if(moveframePerSec < 4){
 					if(moveframe<4){
 						g.drawImage(ImageAssets.zombie[moveframe].getBufferedImage(), (int)x, (int)y, 63,63,null);
@@ -100,6 +104,7 @@ public class Zombie extends Entity{
 				}
 				
 		    }else{
+		    	/*Ha nem támad, akkor a mozgó animációt rendereli.*/
 		    	if(attackframePerSec < 10){
 					if(attackframe > 3 && attackframe < 6){
 						g.drawImage(ImageAssets.zombie[attackframe].getBufferedImage(), (int)x, (int)y, 63,63,null);
@@ -133,6 +138,7 @@ public class Zombie extends Entity{
 			 
 			 
 			 if(bleeding){
+				 /*Ha elkapja egy támadás, akkor vérzik abba az irányba, ahonnan találat érte.*/
 				 g2d.rotate(Math.toRadians(angle), x + width/2,
 				          y + height / 2);
 				if(bleedingframePerSec < 4){
@@ -173,6 +179,7 @@ public class Zombie extends Entity{
 	public void tick() {
 		
 		if(!dead){
+			/*Ha nem halott, akkor mozgást és forgást számol neki.*/
 			 if(getBounds().intersects(handler.getVisibleArea())){
 		    		Point a = new Point((int)width,(int)height/2);
 					Point b = new Point((int)(player.x + player.width/2 - (x + width/2)),(int)(player.y + player.height/2- (y + width/2)));
@@ -224,7 +231,7 @@ public class Zombie extends Entity{
 	        	x = xold;
 				y = yold;
 				menjtovabb = true;
-				if(this.playerrelukozott){
+				if(this.collideplayer){
 	        		menjtovabb = false;
 	        	}
 	        }else{
@@ -233,6 +240,7 @@ public class Zombie extends Entity{
 	        }
 	        
 	        if(menjtovabb){
+	        	/*ha elõre nem mehet, 90 fokkal elforgatva megnézzük,hogy mozoghat-e.*/
 	        	  left = RotateViktor.rotatePoint(new Point((int)newX,(int)newY), 90, (int)this.x+this.width/2, (int)this.y+this.height/2);
 	        	  distX = left.x - this.x+this.width/2;
 	  	        distY = left.y - this.y+this.height/2;
@@ -256,7 +264,7 @@ public class Zombie extends Entity{
 		        		Collision.EntityCollisionEntity1(getCollisionArea(), this, handler)){
 		        	x = xold;
 					y = yold;
-					if(this.playerrelukozott){
+					if(this.collideplayer){
 		        		menjtovabb = false;
 		        	}
 					
@@ -267,6 +275,8 @@ public class Zombie extends Entity{
 	        }
 	        
 	        if(menjtovabb){
+	        	/*Ha az elõzõ két irányba sem mozoghat,akkor megnézi,hogy -90 fokkal elfordulva mozoghat-e elõre, ha nem
+	        	 akkor abszolút nem mozoghat a zombie.*/
 	        	  right = RotateViktor.rotatePoint(new Point((int)newX,(int)newY), -90, (int)this.x+this.width/2, (int)this.y+this.height/2);
 	        	  distX = right.x - this.x+this.width/2;
 	  	        distY = right.y - this.y+this.height/2;
@@ -290,7 +300,7 @@ public class Zombie extends Entity{
 		        		Collision.EntityCollisionEntity1(getCollisionArea(), this, handler)){
 		        	x = xold;
 					y = yold;
-					if(this.playerrelukozott){
+					if(this.collideplayer){
 		        		menjtovabb = false;
 		        	}
 					
@@ -322,7 +332,7 @@ public class Zombie extends Entity{
 		   
 			if(getBounds().intersects(player.getBounds())){
 				if(attackable){
-					if(player.health - 10 > 0){
+					if(player.health - 200 > 0){
 						attacking = true;
 						attackable = false;
 						player.setHealth(-200);

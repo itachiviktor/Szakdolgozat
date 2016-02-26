@@ -10,7 +10,7 @@ import com.hb.items.AbstractItem;
 
 public class Slot extends Rectangle{
 	
-	/*Az inventoryban lévõ hely.Egy inventory 48 helyet,azaz slotot tartalmaz.A slot tárolja az itemet.*/
+	/*Az inventoryban lévõ hely.Egy inventory 36 helyet,azaz slotot tartalmaz.A slot tárolja az itemet.*/
 	
 	/**
 	 * 

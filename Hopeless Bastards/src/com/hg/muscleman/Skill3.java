@@ -29,7 +29,7 @@ public class Skill3 extends AbstractSkill{
 			player.movementSpeed=10;
 			
 			isactivated = true;
-			player.hudmanager.skill3useable = false;
+			player.monitorScreenmanager.skill3useable = false;
 			
 		}
 	}
@@ -49,7 +49,7 @@ public class Skill3 extends AbstractSkill{
 		this.timeuntilcdend = this.skillStartedMainTime + this.cdtime - (Game.maintime);
 		
 		if(this.skillStartedMainTime + this.cdtime < Game.maintime || skillStartedMainTime == 0){
-			player.hudmanager.skill3useable = true;
+			player.monitorScreenmanager.skill3useable = true;
 		}
 	}
 

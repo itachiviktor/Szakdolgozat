@@ -24,7 +24,7 @@ public class Skill4 extends AbstractSkill{
 				this.animaionStillRuning = true;
 				player.bullets.add(new Bullet(player.x+player.width+player.width/3,player.y+29, player.angle, 65, 6,2,player.handler,player));/*közép egykezes fegyóból*/
 	 			
-				player.hudmanager.skill4useable = false;
+				player.monitorScreenmanager.skill4useable = false;
 			}	
 		}
 
@@ -42,7 +42,7 @@ public class Skill4 extends AbstractSkill{
 		   this.timeuntilcdend = this.skillStartedMainTime + this.cdtime - (Game.maintime);
 			
 			if(this.skillStartedMainTime + this.cdtime < Game.maintime || skillStartedMainTime == 0){
-				player.hudmanager.skill4useable = true;
+				player.monitorScreenmanager.skill4useable = true;
 			}
 	   }
 }

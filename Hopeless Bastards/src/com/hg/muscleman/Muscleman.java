@@ -9,74 +9,21 @@ import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
-import java.util.ArrayList;
-
 import com.hb.Collision;
 import com.hb.Game;
 import com.hb.Id;
-import com.hb.entity.AbstractSkill;
-import com.hb.entity.Bolt;
 import com.hb.entity.DamagingText;
-import com.hb.entity.Entity;
+import com.hb.entity.Player;
 import com.hb.gamestate.Handler;
 import com.hb.graphics.ImageAssets;
-import com.hb.inventory.Inventory;
-import com.hb.managers.HUDmanager;
 import com.hb.math.RotateViktor;
-import com.hb.skills.FireBolt;
 
-public class Muscleman extends Entity{
-	/*Ez lesz majd egy Player leszármazott, a Player osztályt abstract osztállyá kell alakítani.*/
-	private boolean up,down,right,left;/*mozgásért felelõs változók*/
-	private boolean fire;/*Ez a változó a sima lövést engedélyezi a tick metódusban,ezt egérseseménykor állítjuk*/
-	private boolean doublefire;/*Ez a változó a dupla lövést engedélyezi a tick metódusban,ezt egérseseménykor állítjuk*/
-	
-	private boolean onegunman = true;/*Melyik figura legyen kirajzolva, alapértelmezetten az egykezes fegyós
-	gyúros ember*/
-	private boolean twogunman = false;/*Kétkezes fegyveres fegyós ember*/
-	
-	private boolean dead = false;/*halott-e a player*/
-	private boolean live = true;/*él-e még a player*/
-	
-	public ArrayList<Bullet> bullets = new ArrayList<Bullet>();/*A kilõtt golyókat tároló lista*/
-	public Bolt bolt = null;/*A villám támadás objektum, alapértelmezetten null,majd konstruktorban példányosítom*/
-	public FireBolt firebolt = null;/*Ugyan az a helyzet,mint a boltnál*/
-	
-	public double angle;
-	
-	private int playerframe = 0;
-	private int playerframePerSec = 0;
-	
-	public int framePerSecLimit = 4;
-	
-	public int maxHealth = 1000;
-	
-	public int mana = 450;
-	public int maxMana = 500;
-	
-	/*Erre a kettõre csak egyenlõre van szükség, ugyan úgy nem lesz szükség rájuk mint a boltnál sem,mert osztályszinten el lesz
-	 intézve.*/
-	private int fireboltframe = 0;
-	private int fireboltframePerSec = 0;
-	
-	public double velocityX = 0;
-    public double velocityY = 0;
-    
-    public int movementSpeed = 6;
-    
-    public Polygon polygon = null;
-    public int px,py;
-	
-	public HUDmanager hudmanager;
-	
-	public AbstractSkill[] skills = new AbstractSkill[7];
-	
-	public Inventory inventory;
-	
+
+public class Muscleman extends Player{
 	
 	public Muscleman(int x, int y, int width, int height, Id id, Handler handler) {
 		super(x, y, width, height, id, handler);
-		//hudmanager = new HUDmanager(this);
+	
 		angle = 0;
 		this.health = 1000;
 		polygon = getPolygon();
@@ -84,17 +31,13 @@ public class Muscleman extends Entity{
 		py = polygon.ypoints[0];
 		
 		
-		//skills[0] = new Skill0(this);/*trap*/
-		//skills[1] = new Skill1(this);/*buff*/
-		//skills[2] = new Skill2(this);/*jump back*/
-		//skills[3] = new Skill3(this);/*speed rise*/
-		//skills[4] = new Skill4(this);/*oseshot*/
-		//skills[5] = new Skill5(this);/*doubleshot*/
-		//skills[6] = new Skill6(this);/*explosion*/
-		
-		inventory = new Inventory((int)this.x-500,(int)this.y, 6, handler);
-		
-		inventory.init();
+		skills[0] = new Skill0(this);/*trap*/
+		skills[1] = new Skill1(this);/*buff*/
+		skills[2] = new Skill2(this);/*jump back*/
+		skills[3] = new Skill3(this);/*speed rise*/
+		skills[4] = new Skill4(this);/*oseshot*/
+		skills[5] = new Skill5(this);/*doubleshot*/
+		skills[6] = new Skill6(this);/*explosion*/
 		
 	}
 	
@@ -102,13 +45,21 @@ public class Muscleman extends Entity{
 	      angle = Math.toRadians(aa);
 	 }
 	 
+	 /*A karakterek csak elõre és hátra tudnak mozogni, a forgás irányába.*/
+	 
 	 public void moveForward(int sx, int sy) {
-		 
+		 /*Elõre mozgást megvalósító metódus.Az sx , sy a sebesség mértéke.*/
 		 double xold = x;
 		 double yold = y;
 		 
 	      x += Math.cos(Math.toRadians(angle)) * sx;
 	      y += Math.sin(Math.toRadians(angle)) * sy;
+	      
+	      /*Az oldx, oldy azért kell,hogy tudjuk a karakter eredeti helyét, majd cos,sin-vel, elõre mozgatjuk a
+	       karaktert, azaz az elõremozgatott értékek lesznek az x,y-ban, majd ütközést vizsgálunk, azaz, ha az
+	       elõre mozgatott karakter ütközik valamivel, akkor oda nem léphet, azaz az x,y -nak az oldx,oldy-t kell
+	       értékül adni azaz vissza az eredeti helyére.A moveBackword is ezen az elven mûködik.Annyi
+	       a különbség, hogy ott a speed a fele ennek az értéknek, hátrafele lasabban tud mozogni, mint elõre.*/
 	      if(Collision.PlayerCBlock(
 					new Point((int)x -1 , (int)y - 1),
 					new Point((int)x + width + 1 , (int)y - 1),
@@ -203,7 +154,7 @@ public class Muscleman extends Entity{
 			skills[i].tick();
 		}
 		
-		hudmanager.tick();
+		monitorScreenmanager.tick();
 	}
 
 	public void render(Graphics g){
@@ -346,7 +297,7 @@ public class Muscleman extends Entity{
 		   //bolt.render(g);
 		   
 		    
-		    if(firebolt != null){
+		   /* if(firebolt != null){
 		    	g2d.drawPolygon(firebolt.getPolygon());
 		    	  g2d.rotate(Math.toRadians(angle), x + width/2,
 				          y + height / 2);
@@ -370,7 +321,7 @@ public class Muscleman extends Entity{
 		    	  }
 		    	 
 		    	g2d.setTransform(old);
-		    }
+		    }*/
 	    }
 	    
 	    if(dead){
@@ -408,7 +359,7 @@ public class Muscleman extends Entity{
 			    g2d.setTransform(old);
 	    }
 	    
-		this.hudmanager.render(g);
+		this.monitorScreenmanager.render(g);
 		this.inventory.render(g);
 		
 	}

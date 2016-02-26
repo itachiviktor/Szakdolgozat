@@ -17,9 +17,6 @@ public class GameStateButton extends Rectangle{
 	
 	/*Ez az ostály egy gomb osztály a Canvasan.Olyan mint Frameknél a JButton.*/
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	public GameState nextGamestate;/*Ha a gombra kattintanak,akkor ezt a GameState objektumot hozza elõ a játék,azaz behozza a játékot,
@@ -43,9 +40,9 @@ public class GameStateButton extends Rectangle{
 	/*Az alábbi fontrendereres holmik azért kellenek,hogy formázott szöveget tudjunk kirajzolni a képernyõre.*/
 	private FontRenderContext frc;
 	
-	private Font betutipus = new Font("Arial",Font.PLAIN,25);
+	private Font fontstyle = new Font("Arial",Font.PLAIN,25);
 	private String text;
-	private TextLayout megjelenito;
+	private TextLayout visualizer;/*megjelenítõ*/
 	
 	public GameStateButton(int x,int y,int width,int height,GameState nextGamestate,GameState actualGameState,String text,Game gsm) {
 		this.actualGameState = actualGameState;
@@ -108,23 +105,23 @@ public class GameStateButton extends Rectangle{
 			  vonatkozik,hogy az frc FontRenderContextnek van-e érték adva.*/
 			if(!initialized){
 				frc = ((Graphics2D) g).getFontRenderContext();
-				megjelenito = new TextLayout(text,betutipus,frc);
+				visualizer = new TextLayout(text,fontstyle,frc);
 				initialized = true;
 			}
 			g.setColor(new Color(207,208,210));
-			megjelenito.draw((Graphics2D) g, x + 2, y + 33);
+			visualizer.draw((Graphics2D) g, x + 2, y + 33);
 
 		}else{
 			
 			g.drawImage(ImageAssets.startGameClicked, x + 20, y,300,50,null);
 			if(!initialized){
 				frc = ((Graphics2D) g).getFontRenderContext();
-				megjelenito = new TextLayout(text,betutipus,frc);
+				visualizer = new TextLayout(text,fontstyle,frc);
 				initialized = true;
 			}
 			
 			g.setColor(new Color(28,32,35));
-			megjelenito.draw((Graphics2D) g, x + 2 + 20, y + 33);
+			visualizer.draw((Graphics2D) g, x + 2 + 20, y + 33);
 			
 			heldover = false;			
 		}

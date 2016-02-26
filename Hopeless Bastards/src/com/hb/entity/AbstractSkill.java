@@ -27,7 +27,7 @@ public abstract class AbstractSkill {
 	public boolean isactivated = false;/*aktiválva van-e a skill, ez azért fontos , mert a player objektumban
 	minden skillre van egy objektum, és ez a változó jelzi,hogy a skill mûködik-e vagy sem.*/
 	
-	public boolean animaionStillRuning = false;
+	public boolean animaionStillRuning = false;/*Ez a változó amíg igaz, addig kell kirajzolni a képességhez tartozó animációt.*/
 	
 	
 	public AbstractSkill(Player player) {

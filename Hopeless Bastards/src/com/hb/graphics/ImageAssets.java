@@ -28,7 +28,7 @@ public class ImageAssets {
 	public static Sprite manapotion;
 	public static Sprite earth;
 	public static Sprite cursorsprite;
-	public static Sprite[] greenfika = new Sprite[5];
+
 	public static Sprite[] zombie = new Sprite[10];
 	public static Sprite[] fatmonster = new Sprite[11];
 	public static Sprite[] bleeding = new Sprite[6];
@@ -140,9 +140,7 @@ public class ImageAssets {
 		 waterplant = new Sprite(sheet32,8,1,32,32);
 		 manapotion = new Sprite(skills64,2,1,64,64);
 		 
-		 for(int i=0;i<5;i++){
-			 greenfika[i] = new Sprite(sheet128,i+1,2,128,128);
-		 }
+		
 		 
 		 for(int i=0;i<11;i++){
 			 player[i] = new Sprite(skills64,i+1,6,64,64);

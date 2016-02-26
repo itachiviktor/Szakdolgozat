@@ -18,7 +18,7 @@ public class MenuState extends GameState{
 	
 	/*Elõször is 3 gomb létrehozása*/
 	private GameStateButton startGame;
-	private GameStateButton option;
+	private GameStateButton options;
 	private GameStateButton exit;
 	
 	public MenuState(Game gsm) {
@@ -31,7 +31,7 @@ public class MenuState extends GameState{
 		/*A gombok példányosítása úgy,hogy megadjuk a koordinátákat, és a nextGameState-t,hogy melyik gomb,melyik GameState-ra
 		 navigálja az alkalmazást.*/
 		startGame = new GameStateButton(Game.WIDTH/3, Game.HEIGHT/3,300,50, new Handler(gsm),this,"START GAME", gsm);
-		option = new GameStateButton(Game.WIDTH/3, Game.HEIGHT/3 + 100,300,50, new Handler(gsm),this,"OPTION", gsm);
+		options = new GameStateButton(Game.WIDTH/3, Game.HEIGHT/3 + 100,300,50, new Handler(gsm),this,"OPTIONS", gsm);
 		exit = new GameStateButton(Game.WIDTH/3, Game.HEIGHT/3 + 200,300,50, null,this,"EXIT", gsm);
 	}
 
@@ -43,7 +43,7 @@ public class MenuState extends GameState{
 		
 		/*A 3 gomb tick metódusát hívja.*/
 		startGame.tick();
-		option.tick();
+		options.tick();
 		exit.tick();
 	}
 
@@ -54,7 +54,7 @@ public class MenuState extends GameState{
 		
 		/*A 3 gomb render metódusának meghívása.*/
 		startGame.render(g);
-		option.render(g);
+		options.render(g);
 		exit.render(g);
 		
 		/*Az egér démon kéz kirajzolása.*/
@@ -76,7 +76,7 @@ public class MenuState extends GameState{
 		
 		Point point = new Point(e.getX(),e.getY());
 		startGame.setClicked(point);
-		option.setClicked(point);
+		options.setClicked(point);
 		exit.setClicked(point);
 		
 	}

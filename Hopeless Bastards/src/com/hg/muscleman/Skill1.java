@@ -27,7 +27,7 @@ public class Skill1 extends AbstractSkill{
 		if(this.skillStartedMainTime + this.cdtime < Game.maintime || skillStartedMainTime == 0){
 			this.skillStartedMainTime = Game.maintime;
 			isactivated = true;
-			player.hudmanager.skill1useable = false;
+			player.monitorScreenmanager.skill1useable = false;
 		}
 	}
 	
@@ -53,7 +53,7 @@ public class Skill1 extends AbstractSkill{
 		/*Illetve mindíg megnézi,hogy a cd lejárt-e már,mertha igen ,akkor a hudmanagernek a változóját
 		 truera kell állítani,hogy kivilágosítsa a skillképet.*/
 		if(this.skillStartedMainTime + this.cdtime < Game.maintime || skillStartedMainTime == 0){
-			player.hudmanager.skill1useable = true;
+			player.monitorScreenmanager.skill1useable = true;
 		}
 	}
 		

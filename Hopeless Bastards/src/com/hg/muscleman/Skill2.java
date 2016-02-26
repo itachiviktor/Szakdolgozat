@@ -40,7 +40,7 @@ public class Skill2 extends AbstractSkill{
 			player.x = behing500px.x - player.width/2;
 			player.y = behing500px.y - player.height/2;
  			
-			player.hudmanager.skill2useable = false;
+			player.monitorScreenmanager.skill2useable = false;
 		}
 	}
 	
@@ -49,7 +49,7 @@ public class Skill2 extends AbstractSkill{
 		this.timeuntilcdend = this.skillStartedMainTime + this.cdtime - (Game.maintime);
 		
 		if(this.skillStartedMainTime + this.cdtime < Game.maintime || skillStartedMainTime == 0){
-			player.hudmanager.skill2useable = true;
+			player.monitorScreenmanager.skill2useable = true;
 		}
 	}
 	

@@ -8,7 +8,7 @@ import com.hb.Id;
 import com.hb.gamestate.Handler;
 
 public abstract class Entity {
-	/*Ez az osztály arra szolgál,hogy leszármazzanak belõle a játék entitásai(player,zombie,mozgó dolgok).
+	/*Ez az osztály arra szolgál,hogy leszármazzanak belõle a játék entitásai(player,zombie,mozgó elemek).
 	 Itt olyan változókat és metódusokat definiálok,amik minden entitásnak vannak.*/
 	
 	public double x=0;
@@ -22,7 +22,8 @@ public abstract class Entity {
 	
 	public Handler handler;
 	
-	public boolean playerrelukozott = false;
+	public boolean collideplayer = false;/*playerrel ütközött-e, erre azért van szükség,hogy az ütközésnél
+	fontos tudni,hogy playerrel ütköztem-e.*/
 	
 	public Entity(double x,double y,int width,int height,Id id,Handler handler) {
 		this.x = x;

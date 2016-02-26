@@ -41,7 +41,7 @@ public class Skill6 extends AbstractSkill{
 			damagingArea = getBounds();
 			
 			isactivated = true;
-			player.hudmanager.skill6useable = false;
+			player.monitorScreenmanager.skill6useable = false;
 			
 		}
 	}
@@ -52,7 +52,7 @@ public class Skill6 extends AbstractSkill{
 				for(int i=0;i<player.handler.entity.size();i++){
 					Entity en = player.handler.entity.get(i);
 					if(en.getId()!= Id.PLAYER && en.getDamagedArea().intersects(this.damagingArea)){
-						en.setHealth(-200);
+						en.setHealth(-1000);
 						player.handler.damagetext.add(new DamagingText(en.x, en.y, String.valueOf(200),true, player.handler));
 					}	
 				}
@@ -63,7 +63,7 @@ public class Skill6 extends AbstractSkill{
 		this.timeuntilcdend = this.skillStartedMainTime + this.cdtime - (Game.maintime);
 		
 		if(this.skillStartedMainTime + this.cdtime < Game.maintime || skillStartedMainTime == 0){
-			player.hudmanager.skill6useable = true;
+			player.monitorScreenmanager.skill6useable = true;
 		}
 	}
 

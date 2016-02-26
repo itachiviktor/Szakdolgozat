@@ -4,8 +4,6 @@ import java.awt.Canvas;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.image.BufferStrategy;
@@ -13,20 +11,16 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.JFrame;
 import com.hb.gamestate.GameState;
-import com.hb.gamestate.Handler;
 import com.hb.gamestate.MenuState;
 import com.hb.graphics.ImageAssets;
 
 
 public class Game extends Canvas implements Runnable,PropertyChangeListener{
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 	public static int WIDTH;
 	public static int HEIGHT;
 
-	
 	public static  int maintime = 0;
 	/*Ez a változó a játék indítása óta eltelt másodpercet tartalmazza.Egy külön szál másopercenként eggyel növeli az értékét.
 	 Ez az idõzítés miatt nagyon fontos.*/
@@ -37,12 +31,6 @@ public class Game extends Canvas implements Runnable,PropertyChangeListener{
 	public static ImageAssets assets = new ImageAssets();/*Ez az objektum tartalmazza az összes betöltött képet,BufferedImaget,
 	statikus változóként elérhetõek ezen statikus objektumon keresztül.*/
 	
-	public static Sound jump;
-	public static Sound goombasound;
-	public static Sound levelComplete;
-	public static Sound diesound;
-	
-	public Handler handler;
 	
 	public GameStateList states;/*Ez az osztály lényegében a GameStateManager,ami mindíg ebben a listában
 	tárolja az aktuális GameStatet,tehát ennek a listának mindíg csak egy eleme van,az aktuális GameState.*/
@@ -50,8 +38,7 @@ public class Game extends Canvas implements Runnable,PropertyChangeListener{
 	private OneSecTimer timer = new OneSecTimer();/*Ugye ebbõl a szálból indítom majd a másodpercszámláló szálat,ezért itt 
 	inicializálódik az objektuma.*/
 	
-	private GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-	GraphicsDevice[] dev = env.getScreenDevices();
+	
 	
 	public Game() {
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();/*A képernyõ méretét kérem le*/

@@ -24,7 +24,7 @@ public class Skill5 extends AbstractSkill{
 			   player.bullets.add(new Bullet(player.x+player.width+10,player.y+42, player.angle, 65, 6,1,player.handler,player));/*jobboldali fegyóból*/
 	           player.bullets.add(new Bullet(player.x+player.width+10,player.y+21, player.angle, 65, 6,0,player.handler,player));/*baloldali fegyóból*/
  			
-			player.hudmanager.skill5useable = false;
+			player.monitorScreenmanager.skill5useable = false;
 		}	
 	}
 
@@ -42,7 +42,7 @@ public class Skill5 extends AbstractSkill{
 	   this.timeuntilcdend = this.skillStartedMainTime + this.cdtime - (Game.maintime);
 		
 		if(this.skillStartedMainTime + this.cdtime < Game.maintime || skillStartedMainTime == 0){
-			player.hudmanager.skill5useable = true;
+			player.monitorScreenmanager.skill5useable = true;
 		}
    }
 
