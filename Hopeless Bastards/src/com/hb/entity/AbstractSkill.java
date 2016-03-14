@@ -36,6 +36,8 @@ public abstract class AbstractSkill {
 	
 	public abstract void activateSkill();/*Minden skillnek kell lennie egy aktiváló metódusnak*/
 	
+	public abstract void activateSkillByServer();
+	
 	public abstract void tick();
 	
 	public abstract void render(Graphics g);

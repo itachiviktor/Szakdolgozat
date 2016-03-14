@@ -22,6 +22,28 @@ public class Skill6 extends AbstractSkill{
 		this.cdtime = 60;
 	}
 	
+	public void activateSkillByServer(){
+		this.skillStartedMainTime = Game.maintime;
+		
+		/*Itt kiszámoltam,hogy melyik bombának mi a korrdinátája,hogy pont körbevegyék a playert.*/
+		bombs[0] = new Rectangle((int)player.x -256, (int)player.y - 256, 192,192);
+		bombs[1] = new Rectangle((int)player.x -256 + 192, (int)player.y - 256, 192,192);
+		bombs[2] = new Rectangle((int)player.x -256 + 384, (int)player.y - 256, 192,192);
+		bombs[3] = new Rectangle((int)player.x -256 + 384, (int)player.y - 256 + 192, 192,192);
+		bombs[4] = new Rectangle((int)player.x -256 + 384, (int)player.y - 256 + 384, 192,192);
+		bombs[5] = new Rectangle((int)player.x -256 + 192, (int)player.y - 256 + 384, 192,192);
+		bombs[6] = new Rectangle((int)player.x -256 , (int)player.y - 256 + 384, 192,192);
+		bombs[7] = new Rectangle((int)player.x -256, (int)player.y - 256 + 192, 192,192);
+	
+	
+		this.animaionStillRuning = true;
+		damagingArea = getBounds();
+		
+		isactivated = true;
+		//player.monitorScreenmanager.skill6useable = false;
+		player.skill6started = false;
+	}
+	
 	public void activateSkill(){
 		if(this.skillStartedMainTime + this.cdtime < Game.maintime || skillStartedMainTime == 0){
 			this.skillStartedMainTime = Game.maintime;
@@ -42,6 +64,7 @@ public class Skill6 extends AbstractSkill{
 			
 			isactivated = true;
 			player.monitorScreenmanager.skill6useable = false;
+			player.skill6started = true;
 			
 		}
 	}
@@ -52,8 +75,16 @@ public class Skill6 extends AbstractSkill{
 				for(int i=0;i<player.handler.entity.size();i++){
 					Entity en = player.handler.entity.get(i);
 					if(en.getId()!= Id.PLAYER && en.getDamagedArea().intersects(this.damagingArea)){
-						en.setHealth(-1000);
-						player.handler.damagetext.add(new DamagingText(en.x, en.y, String.valueOf(200),true, player.handler));
+						en.setHealth(-400);
+						player.handler.damagetext.add(new DamagingText(en.x, en.y, String.valueOf(400),true, player.handler));
+					}	
+				}
+				
+				for(int i=0;i<player.handler.enemies.size();i++){
+					Player en = player.handler.enemies.get(i);
+					if(en.getId()!= Id.PLAYER && en.getDamagedArea().intersects(this.damagingArea)){
+						en.setHealth(-400);
+						player.handler.damagetext.add(new DamagingText(en.x, en.y, String.valueOf(400),true, player.handler));
 					}	
 				}
 		

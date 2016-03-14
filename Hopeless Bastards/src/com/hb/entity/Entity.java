@@ -17,6 +17,8 @@ public abstract class Entity {
 	public int height;
 	
 	public int health;
+	
+	public double angle;
 		
 	public Id id;
 	

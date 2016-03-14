@@ -179,6 +179,23 @@ public class Bullet {
 				   }
 			   }
 		   }
+		   
+		   for(int i=0;i<handler.enemies.size();i++){
+			   Player en = handler.enemies.get(i);
+			   if(en.id != Id.PLAYER && en.getPolygon().contains(this.bulletDamageAreaCenter())){
+				   /*Itt megvizsgálom,hogy a playerhez tartozó buff rajta van-e,mert ha igen,akkor többet sebez a golyó.*/
+				   if(player.skills[1].isactivated){
+					   en.setHealth(- this.dealingDamage * 10);
+					   player.bullets.remove(this);
+					   handler.damagetext.add(new DamagingText(en.x, en.y,String.valueOf(this.dealingDamage*10),true, handler));
+				   }else{
+					   en.setHealth(- this.dealingDamage);
+					   player.bullets.remove(this);
+					   handler.damagetext.add(new DamagingText(en.x, en.y,String.valueOf(this.dealingDamage),true, handler));
+				   }
+			   }
+		   }
+		   
 		   /*Végigmegy az összes pályalemen,és ami solid és ütközik a golyóval,az megfogja a golyót,így az nem megy tovább.*/
 		   for(int i=0;i<handler.tile.size();i++){
 			   Tile t = handler.tile.get(i);

@@ -22,6 +22,28 @@ public class Skill2 extends AbstractSkill{
 		this.cdtime = 25;
 	}
 	
+	@Override
+	public void activateSkillByServer() {
+		this.skillStartedMainTime = Game.maintime;/*skillkezdés beállítás*/
+		this.oldplayerx = (int)player.x;/*player alap koordinátájának beállítása,ahonnan elteleportál*/
+		this.oldplayery = (int)player.y;
+		this.animaionStillRuning = true;
+		
+		/*Itt kiszámoljuk azt a pontot,ami a player közepétõl 500 pixellel mögötte van.
+		 Az a lényeg,hogy alaphelyzetben a player jobboldalra néz,tehát a mögötte lévõ pontot úgy kapom meg,
+		 hogy az x koordinátájából kivonok 500-at.Majd ezt a pontot annyival forgatom a player középpontja körül,
+		 ahány fokkal el van fordulva a player, és kész, megvan a pontosan mögötte lévõ pont.*/
+		Point behing500px = RotateViktor.rotatePoint(new Point((int)player.x+player.width/2-300, (int)player.y+player.height/2), player.angle, (int)player.x+player.width/2,(int)player.y+player.height/2);
+		
+		/*Az új hely koordinátáinak meghatározása.*/
+		player.x = behing500px.x - player.width/2;
+		player.y = behing500px.y - player.height/2;
+			
+		//player.monitorScreenmanager.skill2useable = false;
+		player.skill2started = false;
+		
+	}
+	
 	public void activateSkill(){
 		/**/
 		if(this.skillStartedMainTime + this.cdtime < Game.maintime || skillStartedMainTime == 0){
@@ -41,6 +63,7 @@ public class Skill2 extends AbstractSkill{
 			player.y = behing500px.y - player.height/2;
  			
 			player.monitorScreenmanager.skill2useable = false;
+			player.skill2started = true;
 		}
 	}
 	

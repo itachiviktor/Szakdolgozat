@@ -1,5 +1,6 @@
 package com.hg.muscleman;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -9,6 +10,10 @@ import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.hb.Collision;
 import com.hb.Game;
 import com.hb.Id;
@@ -21,15 +26,14 @@ import com.hb.math.RotateViktor;
 
 public class Muscleman extends Player{
 	
-	public Muscleman(int x, int y, int width, int height, Id id, Handler handler) {
-		super(x, y, width, height, id, handler);
+	public Muscleman(double x, double y, int width, int height, Id id,String networkId, Handler handler) {
+		super(x, y, width, height, id,networkId, handler);
 	
 		angle = 0;
-		this.health = 1000;
+		this.health = 500;
 		polygon = getPolygon();
 		px = polygon.xpoints[0];
 		py = polygon.ypoints[0];
-		
 		
 		skills[0] = new Skill0(this);/*trap*/
 		skills[1] = new Skill1(this);/*buff*/
@@ -38,7 +42,6 @@ public class Muscleman extends Player{
 		skills[4] = new Skill4(this);/*oseshot*/
 		skills[5] = new Skill5(this);/*doubleshot*/
 		skills[6] = new Skill6(this);/*explosion*/
-		
 	}
 	
 	 public void setAngle(int aa) {
@@ -109,52 +112,57 @@ public class Muscleman extends Player{
 	@Override
 	public void tick(){
 		
-		inventory.tick();
-		
-		 for(int i = 0; i < bullets.size(); i++) {
+		for(int i = 0; i < bullets.size(); i++) {
 		       Bullet tmpB = bullets.get(i);
 
 		       tmpB.moveForward(15);
 		       tmpB.tick();
-		 }
-		if(up){
-			moveForward(movementSpeed, movementSpeed);
 		}
-		if(down){
-			moveBackword(movementSpeed-3,movementSpeed-3);
-			
-		}
-		if(left){
-			angle -=2;
-			if (angle > 360) {
-			       angle = 0;
-			    } else if (angle < 0) {
-			       angle = 360;
+		
+		if(this.id == Id.PLAYER){
 
-			    }
+			if(up){
+				moveForward(movementSpeed, movementSpeed);
+			}
+			if(down){
+				moveBackword(movementSpeed-3,movementSpeed-3);
+				
+			}
+			if(left){
+				angle -=2;
+				if (angle > 360) {
+				       angle = 0;
+				    } else if (angle < 0) {
+				       angle = 360;
+
+				    }
+				
+				polygon = getPolygon();
+				px = polygon.xpoints[0];
+				py = polygon.ypoints[0];
+			}
+			if(right){
+				angle +=2;
+				if (angle > 360) {
+				       angle = 0;
+				    } else if (angle < 0) {
+				       angle = 360;
+				    }
+			}
+			    
+			/*if(firebolt != null){
+			    firebolt.tick();
+			}*/
 			
-			polygon = getPolygon();
-			px = polygon.xpoints[0];
-			py = polygon.ypoints[0];
+			inventory.tick();
+			monitorScreenmanager.tick();
 		}
-		if(right){
-			angle +=2;
-			if (angle > 360) {
-			       angle = 0;
-			    } else if (angle < 0) {
-			       angle = 360;
-			    }
-		}
-		    
-		/*if(firebolt != null){
-		    firebolt.tick();
-		}*/
+		
 		    
 		for(int i=0;i<7;i++){
 			skills[i].tick();
 		}
 		
-		monitorScreenmanager.tick();
 	}
 
 	public void render(Graphics g){
@@ -165,22 +173,26 @@ public class Muscleman extends Player{
 	    
 	    
 	    AffineTransform old = g2d.getTransform();
-	    g2d.drawString("" + Game.maintime,(int)x +30 ,(int)y - 100 );
-	    
-	  
 	    
 	    for(int i=0;i<7;i++){
 	    	skills[i].render(g);
 	    }
-		   
+		
 	    if(live){
-	    	/*if(skills[2].isactivated){
-	    		skills[2].render(g2d);
-	    	}*/
+	 
 	    
-	    	Point behing500px = RotateViktor.rotatePoint(new Point((int)x+width/2-300, (int)y+height/2), angle, (int)x+width/2,(int)y+height/2);
-			g2d.drawLine((int)x+width/2,(int)y+height/2,behing500px.x,behing500px.y);
-	    	g2d.drawPolygon(getPolygon());
+	    	//Point behing500px = RotateViktor.rotatePoint(new Point((int)x+width/2-300, (int)y+height/2), angle, (int)x+width/2,(int)y+height/2);
+			//g2d.drawLine((int)x+width/2,(int)y+height/2,behing500px.x,behing500px.y);
+	    	//g2d.drawPolygon(getPolygon());
+	    	g2d.setColor(Color.white);
+	    	if(id != Id.PLAYER){
+	    		g2d.drawRect((int)x, (int)y - 20, width, 10);
+	    		double healthpercent = (double)this.health / (double)this.maxHealth;
+	    		g2d.setColor(Color.green);
+	    		g2d.fillRect((int)x + 1, (int)y - 19, (int)((double)width * healthpercent), 9);
+	    		g2d.drawString("" + this.health,(int)x +30 ,(int)y - 100 );
+	    		
+	    	}
 		    g2d.rotate(Math.toRadians(angle), x + width/2,
 		          y + height / 2);
 		    
@@ -282,8 +294,6 @@ public class Muscleman extends Player{
 			    	  
 			       }
 		       
-		      
-		       
 		       g2d.rotate(Math.toRadians(tmpB.getAngle()), tmpB.getX() + tmpB.getWidth()/2,
 		 	          tmpB.getY() + tmpB.getHeight() / 2);
 		       g2d.drawImage(ImageAssets.bullet,(int) tmpB.getX(), (int) tmpB.getY(), (int)tmpB.getWidth(),
@@ -295,8 +305,6 @@ public class Muscleman extends Player{
 		    g2d.setTransform(old);
 		    
 		   //bolt.render(g);
-		   
-		    
 		   /* if(firebolt != null){
 		    	g2d.drawPolygon(firebolt.getPolygon());
 		    	  g2d.rotate(Math.toRadians(angle), x + width/2,
@@ -319,13 +327,13 @@ public class Muscleman extends Player{
 							fireboltframePerSec = 0;
 						}
 		    	  }
-		    	 
 		    	g2d.setTransform(old);
 		    }*/
 	    }
 	    
 	    if(dead){
-	    	 g2d.rotate(Math.toRadians(angle), x + width/2,
+	    	System.exit(0);
+	    	/* g2d.rotate(Math.toRadians(angle), x + width/2,
 			          y + height / 2);
 	    	 if(playerframePerSec < 11 && playerframePerSec > 8 ){
 					if(playerframe<4){
@@ -344,7 +352,8 @@ public class Muscleman extends Player{
 						g.drawImage(ImageAssets.player[playerframe].getBufferedImage(), (int)x,(int) y, 63,63,null);
 					}
 				}
-	    	   g2d.setTransform(old);
+	    	   g2d.setTransform(old);*/
+	    	
 	    	   for (int i = 0; i < bullets.size(); i++) {
 			       Bullet tmpB = (Bullet) bullets.get(i);
 			                      //playing with bullet colors
@@ -359,9 +368,98 @@ public class Muscleman extends Player{
 			    g2d.setTransform(old);
 	    }
 	    
-		this.monitorScreenmanager.render(g);
-		this.inventory.render(g);
+	    if(this.id == Id.PLAYER){
+	    	this.monitorScreenmanager.render(g);
+			this.inventory.render(g);
+			g2d.drawString("" + Game.maintime,(int)x +30 ,(int)y - 100 );
+	    }
+	    
+	   /* if(this.id != Id.PLAYER){
+			if(this.skill0started){
+				this.skills[0].activateSkillByServer();
+				//this.skill0started = false;
+			}
+			else if(this.skill1started){
+				this.skills[1].activateSkillByServer();
+				//this.skill1started = false;
+			}
+			else if(this.skill2started){
+				this.skills[2].activateSkillByServer();
+				//this.skill2started = false;
+			}
+			else if(this.skill3started){
+				this.skills[3].activateSkillByServer();
+				//this.skill3started = false;
+			}
+			else if(this.skill4started){
+				this.skills[4].activateSkillByServer();
+				//this.skill4started = false;
+			}
+			else if(this.skill5started){
+				this.skills[5].activateSkillByServer();
+				//this.skill5started = false;
+			}
+			else if(this.skill6started){
+				this.skills[6].activateSkillByServer();
+				//this.skill6started = false;
+			}
+		}*/
+	    if(this.id == Id.PLAYER){
+	    	updateServer();
+	    }
+	}
+	
+	public void updateServer(){
 		
+		if(true){
+			JSONObject data = new JSONObject();
+			try{
+					data.put("id",this.networkId);
+					data.put("x", this.x);
+					data.put("y", this.y);
+					data.put("angle",this.angle);
+					data.put("health", this.health);
+					data.put("mana", this.mana);
+					data.put("onegunman", this.onegunman);
+					data.put("twogunman", this.twogunman);
+					data.put("dead", this.dead);
+					data.put("live", this.live);
+					data.put("maxhealth", this.maxHealth);
+					data.put("maxmana", this.maxMana);
+					data.put("skill0started", this.skill0started);
+					data.put("skill1started", this.skill1started);
+					data.put("skill2started", this.skill2started);
+					data.put("skill3started", this.skill3started);
+					data.put("skill4started", this.skill4started);
+					data.put("skill5started", this.skill5started);
+					data.put("skill6started", this.skill6started);
+					
+					if(this.skill0started){
+						this.skill0started = false;
+					}else if(this.skill1started){
+						this.skill1started = false;
+					}else if(this.skill2started){
+						this.skill2started = false;
+					}else if(this.skill3started){
+						this.skill3started = false;
+					}else if(this.skill4started){
+						this.skill4started = false;
+					}else if(this.skill5started){
+						this.skill5started = false;
+					}else if(this.skill6started){
+						this.skill6started = false;
+					}
+					
+					handler.socket.emit("playerMoved", data);
+					
+					
+					
+			}catch(JSONException e){
+				e.getMessage();
+			}
+			
+		
+		}
 	}
 
 	public double getX() {
@@ -455,6 +553,7 @@ public class Muscleman extends Player{
 		else if(key == KeyEvent.VK_D){
 			right = true;
 		}else if(key == KeyEvent.VK_ESCAPE){
+			
 			System.exit(0);
 		}else if(key == KeyEvent.VK_R){
 			//bolt.activateSkill(x + width, y -118, angle, 512, 300);
@@ -518,6 +617,4 @@ public class Muscleman extends Player{
 		    twogunman = true;
 		}
 	}
-	
 }
-

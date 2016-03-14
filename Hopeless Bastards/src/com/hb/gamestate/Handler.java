@@ -10,6 +10,11 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.hb.Camera;
 import com.hb.Game;
 import com.hb.Id;
@@ -17,6 +22,7 @@ import com.hb.entity.DamagingText;
 import com.hb.entity.Entity;
 import com.hb.entity.EntityList;
 import com.hb.entity.Player;
+import com.hb.entity.ServerPlayerList;
 import com.hb.entity.TileList;
 import com.hb.entity.Zombie;
 import com.hb.gamestate.GameState;
@@ -28,12 +34,19 @@ import com.hb.tile.Wall;
 import com.hb.tile.WallType;
 import com.hg.muscleman.Muscleman;
 
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
+
 public class Handler extends GameState {
 	/*Ez az osztály egy játékállás, méghozzá a játéké.Tehát a karakterek itt mozogbak stb.....*/
 	
-	
+	public Socket socket;
 	
 	public EntityList<Entity> entity = new EntityList<Entity>();/*Tartalmazza az összes mozgó entitást.*/
+	public ServerPlayerList enemies = new ServerPlayerList();
+	public ServerPlayerList friends = new ServerPlayerList();
+	
 	public TileList<Tile> tile = new TileList<Tile>();/*Tartalmazza az összes nem mozgó pályaelemet ?extends Tile bármi ami
 	Tile leszármazottja*/
 	public List<DamagingText> damagetext = new ArrayList<DamagingText>();
@@ -61,17 +74,15 @@ public class Handler extends GameState {
 	
 	@Override
 	public void init() {
+		connectSocket();
+		configSocketEvents();
 		//random = new Random();
 		/*a pálya elõállító metódus,ami azt a képet tartalmazza,amiben minden pixel egy pályaelem.*/
 		createLevel(ImageAssets.image);
 		camera = new Camera();
 
 		/*Kiszedjük a Playert, mivel a createlevel metódusban a pályán a Player is fel van tüntetve ezért, már lérte van hozva.*/
-		for(int i=0;i<entity.size();i++){
-			if(entity.get(i).getId() == Id.PLAYER){
-				player = (Player)entity.get(i);
-			}
-		}
+		
 	}
 	
 	public void render(Graphics g){
@@ -92,6 +103,20 @@ public class Handler extends GameState {
 		 képernyõn,mert ha nincs ,akkor felesleges kirajzolni.)*/
 		for(int i=0;i<entity.size();i++){
 			Entity e = entity.get(i);
+			if(getVisibleArea() != null && e.getBounds().intersects(getVisibleArea())){
+				e.render(g);
+			}
+		}
+		
+		for(int i=0;i<enemies.size();i++){
+			Entity e = enemies.get(i);
+			if(getVisibleArea() != null && e.getBounds().intersects(getVisibleArea())){
+				e.render(g);
+			}
+		}
+		
+		for(int i=0;i<friends.size();i++){
+			Entity e = friends.get(i);
 			if(getVisibleArea() != null && e.getBounds().intersects(getVisibleArea())){
 				e.render(g);
 			}
@@ -150,6 +175,14 @@ public class Handler extends GameState {
 			entity.get(i).tick();
 		}
 		
+		for(int i=0;i<enemies.size();i++){
+			enemies.get(i).tick();
+		}
+		
+		for(int i=0;i<friends.size();i++){
+			friends.get(i).tick();
+		}
+		
 		/*Meghívja az összes pályaelem tick metódusát,feltéve ha azok a képernyõn vannak, ezt az entitásonál azért
 		 nem lehet megtenni,mert akkor a képernyõn kívül lévõ entitások nem mozognának(hisz a tick metódus mozgat), és az 
 		 gáz lenne.*/
@@ -168,12 +201,17 @@ public class Handler extends GameState {
 		}
 		
 		/*Camera tick metódusának meghívása.*/
-		camera.tick(player);
+		if(player != null){
+			camera.tick(player);
+			/*Az egér Point meghatározása.Azért kell a getVisibleAreat hozzáadni,mert a moseMovedX az az x érték,ahova az egér a
+			 látható monitoron mozgott,viszont az nem biztos,hogy a player már nem mozdult el pl jobbra 2000 pixelt, ezért
+			 el kell mozgatnunk annyival,hogy utolérje a kivetített képet.*/
+			
+			mouse = new Point(mouseMovedX + getVisibleArea().x,mouseMovedY + getVisibleArea().y);
+		}
 		
-		/*Az egér Point meghatározása.Azért kell a getVisibleAreat hozzáadni,mert a moseMovedX az az x érték,ahova az egér a
-		 látható monitoron mozgott,viszont az nem biztos,hogy a player már nem mozdult el pl jobbra 2000 pixelt, ezért
-		 el kell mozgatnunk annyival,hogy utolérje a kivetített képet.*/
-		mouse = new Point(mouseMovedX + getVisibleArea().x,mouseMovedY + getVisibleArea().y);
+		
+		
 	}
 	
 	public void addEntity(Entity e){
@@ -182,6 +220,22 @@ public class Handler extends GameState {
 	
 	public void removeEntity(Entity e){
 		entity.remove(e);
+	}
+	
+	public void addEnemy(Player e){
+		enemies.add(e);
+	}
+	
+	public void removeEnemy(Player e){
+		enemies.remove(e);
+	}
+	
+	public void addFriend(Player e){
+		friends.add(e);
+	}
+	
+	public void removeFriend(Player e){
+		friends.remove(e);
 	}
 	
 	public void addTile(Tile e){
@@ -314,32 +368,171 @@ public class Handler extends GameState {
 				
 				else if(red == 0 && green == 0 && blue == 255){
 					/*teljesen kék pixel*/
-					addEntity(new Muscleman(x*63,y*63,63,63,Id.PLAYER,this));
-					addTile(new Wall(x*64,y*64,64,64,false,Id.WALL,WallType.FOLD,this));
+					
 				}
 				
 			}
 		}
 		
-		entityTrade();
-		Entity trade = null;
-		for(int i=0;i<entity.size();i++){
-			if(entity.get(i).id == Id.PLAYER){
-				trade = entity.get(i);
-			}
-		}
-		
-		for(int i=0;i<25;i++){
+		//addEnemy(new Muscleman(1500,1500,63,63,Id.ENEMYPLAYER,this));
+		/*for(int i=0;i<25;i++){
 			addEntity(new Zombie(i*68+1000, i*68+1000, 63, 63,Id.ZOMBIE,trade,this));
-		}
+		}*/
 		addTile(new ManaPotion(1200, 1300, 32, 32, this, "mana", 2, ImageAssets.manapotion.getBufferedImage()));
 		
-		entityTrade();		
+		//entityTrade();		
 		/*for(int i=0;i<20;i++){
 			
 			addEntity(new FatMonster(i*68 + 4000, i*68 + 4000, 64, 64, Id.FATMONSTER,trade, this));
 		}*/
 		
+	}
+	
+	private void configSocketEvents() {
+		/*az elsõ a kapcsolódási eseményre reagál*/
+		socket.on("socketID", new Emitter.Listener() {
+			
+			@Override
+			public void call(Object... arg0) {
+				JSONObject data = (JSONObject)arg0[0];
+				try{
+					System.out.println("socketid");
+					String id = data.getString("id");
+					
+					addEntity(new Muscleman(1600,1600,63,63,Id.PLAYER,id,Handler.this));
+					addTile(new Wall(25*64,25*64,64,64,false,Id.WALL,WallType.FOLD,Handler.this));
+					for(int i=0;i<entity.size();i++){
+						if(entity.get(i).getId() == Id.PLAYER){
+							player = (Player)entity.get(i);
+						}
+					}
+					entityTrade();
+					Entity trade = null;
+					for(int i=0;i<entity.size();i++){
+						if(entity.get(i).id == Id.PLAYER){
+							trade = entity.get(i);
+						}
+					}
+				}catch(JSONException e){
+					e.getMessage();
+				}
+			}
+		}).on("newPlayer", new Emitter.Listener() {
+			
+			@Override
+			public void call(Object... arg0) {
+				JSONObject data = (JSONObject)arg0[0];
+				try{
+					System.out.println("newPlayer");
+					String playerId = data.getString("id");
+					
+					if(!playerId.equals(player.networkId)){
+						enemies.add(new Muscleman(25*63,25*63, 63, 63, Id.ENEMYPLAYER, playerId, Handler.this));
+					}
+					
+				}catch(JSONException e){
+					e.getMessage();
+				}
+				
+			}
+		}).on("playerDisconnected", new Emitter.Listener() {
+			
+			@Override
+			public void call(Object... arg0) {
+				System.out.println("disconnect");
+				JSONObject data = (JSONObject)arg0[0];
+				try{
+					String id = data.getString("id");
+					/*id alapján töröljük a listából(nincs kész)*/
+					enemies.removeById(id);
+				}catch(JSONException e){
+					e.getMessage();
+				}
+				
+			}
+		}).on("getPlayers", new Emitter.Listener() {
+			
+			@Override
+			public void call(Object... arg0) {
+				JSONArray objects = (JSONArray)arg0[0];
+				
+				try{
+					for(int i=0;i<objects.length();i++){
+						String id = objects.getJSONObject(i).getString("id");
+						double x = objects.getJSONObject(i).getDouble("x");
+						double y = objects.getJSONObject(i).getDouble("y");
+						System.out.println("getPlayers");
+						enemies.add(new Muscleman(x, y, 63, 63, Id.ENEMYPLAYER, id, Handler.this));
+						
+					}
+				}catch(JSONException e){
+					e.getMessage();
+				}
+				
+			}
+		}).on("playerMoved", new Emitter.Listener() {
+			
+			@Override
+			public void call(Object... arg0) {
+				JSONObject data = (JSONObject)arg0[0];
+				
+				try{
+					String playerId = data.getString("id");
+				
+						if(enemies.getById(playerId) != null){
+							Player entity = enemies.getById(playerId);
+							entity.x = data.getDouble("x");
+							entity.y = data.getDouble("y");
+							entity.angle = data.getDouble("angle");
+							entity.health = data.getInt("health");
+							entity.maxHealth = data.getInt("maxhealth");
+							entity.mana = data.getInt("mana");
+							entity.maxMana = data.getInt("maxmana");
+							entity.onegunman = data.getBoolean("onegunman");
+							entity.twogunman = data.getBoolean("twogunman");
+							entity.dead = data.getBoolean("dead");
+							entity.live = data.getBoolean("live");
+							entity.skill0started = data.getBoolean("skill0started");
+							entity.skill1started = data.getBoolean("skill1started");
+							entity.skill2started = data.getBoolean("skill2started");
+							entity.skill3started = data.getBoolean("skill3started");
+							entity.skill4started = data.getBoolean("skill4started");
+							entity.skill5started = data.getBoolean("skill5started");
+							entity.skill6started = data.getBoolean("skill6started");
+							if(entity.skill0started){
+								entity.skills[0].activateSkillByServer();
+							}else if(entity.skill1started){
+								entity.skills[1].activateSkillByServer();
+							}else if(entity.skill2started){
+								entity.skills[2].activateSkillByServer();
+							}else if(entity.skill3started){
+								entity.skills[3].activateSkillByServer();
+							}else if(entity.skill4started){
+								entity.skills[4].activateSkillByServer();
+							}else if(entity.skill5started){
+								entity.skills[5].activateSkillByServer();
+							}else if(entity.skill6started){
+								entity.skills[6].activateSkillByServer();
+							}
+						}
+						
+				}catch(JSONException e){
+					e.getMessage();
+				}
+				
+			}
+		});
+		
+	}
+
+	private void connectSocket() {
+		try{
+			socket = IO.socket("mat76.mat.uni-miskolc.hu:8080");
+			socket.connect();
+		}catch(Exception e){
+			e.getMessage();
+		}
+			
 	}
 	
 	/*Az alábbiakban eseménykezelés történik.*/
@@ -362,7 +555,10 @@ public class Handler extends GameState {
 	@Override
 	public void mousePressed(MouseEvent e) {
 		/*A gomnyomásra a player tudja,hogy melyik skillt tolja el, ezért az õ metódusát hívom meg.*/
-		player.MousePressed(e);
+		if(player != null){
+			player.MousePressed(e);
+		}
+		
 		
 		if(e.getButton() == MouseEvent.BUTTON1){
 			leftClick = true;
@@ -376,7 +572,10 @@ public class Handler extends GameState {
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		/*Itt megint csak a player tudja mit kell csinálni.*/
-		player.MouseReleased(e.getButton());
+		if(player != null){
+			player.MouseReleased(e.getButton());
+		}
+		
 		
 		if(e.getButton() == MouseEvent.BUTTON1){
 			leftClick = false;
@@ -406,13 +605,19 @@ public class Handler extends GameState {
 	@Override
 	public void keyPressed(KeyEvent e) {
 		/*player tudja mi történik*/
-		player.keyPressed(e.getKeyCode());
+		if(player != null){
+			player.keyPressed(e.getKeyCode());
+		}
+		
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
 		/*player tudja mi történik*/
-		player.keyReleased(e.getKeyCode());
+		if(player != null){
+			player.keyReleased(e.getKeyCode());
+		}
+		
 	}
 
 	@Override

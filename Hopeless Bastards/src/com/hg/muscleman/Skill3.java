@@ -16,6 +16,24 @@ public class Skill3 extends AbstractSkill{
 		this.secWhileActive = 10;
 	}
 	
+	@Override
+	public void activateSkillByServer() {
+		this.skillStartedMainTime = Game.maintime;
+		
+		this.animaionStillRuning = true;
+		/*a skillnek az a lényege,hogy sebességet növeljünk,és ez azt takarja,hogy nagyobb távot tesz meg a player,és
+		 gyorsabban változik az animációképcsere ami azt jelenti,hogy gyorsabb mozgást szimulál a playernek.
+		 A player alapból 4 framepersecet tol, ezt lecsökkentve 2-re dupla olyan gyorsnak tûnik az 
+		 animációs mozgás.A player alapból 6 movementspeedet tol, ezt megnöveljük 10-re*/
+		player.framePerSecLimit = 2;
+		player.movementSpeed=10;
+		
+		isactivated = true;
+		//player.monitorScreenmanager.skill3useable = false;
+		player.skill3started = false;
+		
+	}
+	
 	public void activateSkill(){
 		if(this.skillStartedMainTime + this.cdtime < Game.maintime || skillStartedMainTime == 0){
 			this.skillStartedMainTime = Game.maintime;
@@ -30,6 +48,7 @@ public class Skill3 extends AbstractSkill{
 			
 			isactivated = true;
 			player.monitorScreenmanager.skill3useable = false;
+			player.skill3started = true;
 			
 		}
 	}

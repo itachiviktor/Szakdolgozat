@@ -29,12 +29,31 @@ public class Collision {
 			}
 		}
 		
+		
 		return false;
 	}
 	
 	public static boolean EntityCollisionEntity(Point p1,Point p2,Point p3,Point p4,Entity mover,Handler handler){
 		for(int i=0;i<handler.entity.size();i++){
 			entity = handler.entity.get(i);
+			if(mover != entity && (entity.contains(p1) || entity.contains(p2) || entity.contains(p3) || entity.contains(p4))){
+				if(entity.getId() == Id.PLAYER){
+					mover.collideplayer = true;
+				}
+				return true;
+			}
+		}
+		for(int i=0;i<handler.enemies.size();i++){
+			entity = handler.enemies.get(i);
+			if(mover != entity && (entity.contains(p1) || entity.contains(p2) || entity.contains(p3) || entity.contains(p4))){
+				if(entity.getId() == Id.PLAYER){
+					mover.collideplayer = true;
+				}
+				return true;
+			}
+		}
+		for(int i=0;i<handler.friends.size();i++){
+			entity = handler.friends.get(i);
 			if(mover != entity && (entity.contains(p1) || entity.contains(p2) || entity.contains(p3) || entity.contains(p4))){
 				if(entity.getId() == Id.PLAYER){
 					mover.collideplayer = true;

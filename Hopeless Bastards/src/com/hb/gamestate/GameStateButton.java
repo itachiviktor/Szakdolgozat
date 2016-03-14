@@ -21,6 +21,7 @@ public class GameStateButton extends Rectangle{
 	
 	public GameState nextGamestate;/*Ha a gombra kattintanak,akkor ezt a GameState objektumot hozza elõ a játék,azaz behozza a játékot,
 	vagy az ption menut.*/
+	public GameStateId nextGameState;
 	public GameState actualGameState;/*Az aktuális játékhelyzetet is ismernie kell.*/
 	
 	private Game gsm;/*Ismeri a fõ ciklust futtató osztályt is*/
@@ -44,9 +45,10 @@ public class GameStateButton extends Rectangle{
 	private String text;
 	private TextLayout visualizer;/*megjelenítõ*/
 	
-	public GameStateButton(int x,int y,int width,int height,GameState nextGamestate,GameState actualGameState,String text,Game gsm) {
+	public GameStateButton(int x,int y,int width,int height,GameStateId nextGameState,GameState actualGameState,String text,Game gsm) {
 		this.actualGameState = actualGameState;
-		this.nextGamestate = nextGamestate;
+		//this.nextGamestate = nextGamestate;
+		this.nextGameState = nextGameState;
 		this.gsm = gsm;
 		this.x = x;
 		this.y = y;
@@ -83,8 +85,10 @@ public class GameStateButton extends Rectangle{
 		if(clicked){
 			/*Ha rákattintottak a gomra, akkor elnavigál a következõ GameStatera, azaz a listába felveszi
 			 a nextGameState objektumot, ami pl. a Start Game gombnál a Handler GameState lesz.*/
-			if(nextGamestate != null){
-				gsm.states.add(nextGamestate);
+			
+			
+			if(nextGameState == GameStateId.HANDLER){
+				gsm.states.add(new Handler(gsm));
 			}else{
 				System.exit(0);
 			}

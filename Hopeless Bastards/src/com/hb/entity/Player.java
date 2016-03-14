@@ -49,7 +49,15 @@ public abstract class Player extends Entity{
 	public Bolt bolt = null;/*A villám támadás objektum, alapértelmezetten null,majd konstruktorban példányosítom*/
 	public FireBolt firebolt = null;/*Ugyan az a helyzet,mint a boltnál*/
 	
-	public double angle;
+	public boolean skill0started = false;
+	public boolean skill1started = false;
+	public boolean skill2started = false;
+	public boolean skill3started = false;
+	public boolean skill4started = false;
+	public boolean skill5started = false;
+	public boolean skill6started = false;
+	
+	public String networkId;
 	
 	public int playerframe = 0;
 	public int playerframePerSec = 0;
@@ -78,9 +86,10 @@ public abstract class Player extends Entity{
 	public Inventory inventory;
 	
 	
-	public Player(int x, int y, int width, int height, Id id, Handler handler) {
+	public Player(double x, double y, int width, int height, Id id,String networkId, Handler handler) {
 		super(x, y, width, height, id, handler);
 		monitorScreenmanager = new MonitorScreenManager(this);
+		this.networkId = networkId;
 		inventory = new Inventory((int)this.x-500,(int)this.y, 6, handler);
 		inventory.init();
 	}

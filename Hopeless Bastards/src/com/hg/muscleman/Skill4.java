@@ -15,6 +15,18 @@ public class Skill4 extends AbstractSkill{
 	
 		    this.cdtime = 1;
 		}
+		
+		@Override
+		public void activateSkillByServer() {
+			this.skillStartedMainTime = Game.maintime;
+			
+			this.animaionStillRuning = true;
+			player.bullets.add(new Bullet(player.x+player.width+player.width/3,player.y+29, player.angle, 65, 6,2,player.handler,player));/*közép egykezes fegyóból*/
+ 			
+			//player.monitorScreenmanager.skill4useable = false;
+			player.skill4started = false;
+			
+		}
 
 		@Override
 		public void activateSkill() {
@@ -25,6 +37,7 @@ public class Skill4 extends AbstractSkill{
 				player.bullets.add(new Bullet(player.x+player.width+player.width/3,player.y+29, player.angle, 65, 6,2,player.handler,player));/*közép egykezes fegyóból*/
 	 			
 				player.monitorScreenmanager.skill4useable = false;
+				player.skill4started = true;
 			}	
 		}
 

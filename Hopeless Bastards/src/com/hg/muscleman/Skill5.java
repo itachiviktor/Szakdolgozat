@@ -14,6 +14,19 @@ public class Skill5 extends AbstractSkill{
 
 	    this.cdtime = 4;
 	}
+	
+	@Override
+	public void activateSkillByServer() {
+		this.skillStartedMainTime = Game.maintime;
+		
+		this.animaionStillRuning = true;
+		   player.bullets.add(new Bullet(player.x+player.width+10,player.y+42, player.angle, 65, 6,1,player.handler,player));/*jobboldali fegyóból*/
+           player.bullets.add(new Bullet(player.x+player.width+10,player.y+21, player.angle, 65, 6,0,player.handler,player));/*baloldali fegyóból*/
+			
+		//player.monitorScreenmanager.skill5useable = false;
+		player.skill5started = false;
+		
+	}
 
 	@Override
 	public void activateSkill() {
@@ -25,6 +38,7 @@ public class Skill5 extends AbstractSkill{
 	           player.bullets.add(new Bullet(player.x+player.width+10,player.y+21, player.angle, 65, 6,0,player.handler,player));/*baloldali fegyóból*/
  			
 			player.monitorScreenmanager.skill5useable = false;
+			player.skill5started = true;
 		}	
 	}
 

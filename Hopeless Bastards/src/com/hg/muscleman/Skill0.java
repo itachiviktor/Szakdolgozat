@@ -15,6 +15,17 @@ public class Skill0 extends AbstractSkill{
 		/*Az õsben definiált változónak értékadás.*/
 		this.cdtime = 5;
 	}
+	
+	@Override
+	public void activateSkillByServer() {
+		this.skillStartedMainTime = Game.maintime;/*A skillkezdési idõt beállítom a játék fõidejére*/
+		isactivated = true;/*aktívnak tekintjük innentõl a skillt*/
+		//player.monitorScreenmanager.skill0useable = false;
+		player.handler.tile.add(new Bomb((int)player.x,(int) player.y, 32, 32, player.handler));/*Ugyebár ez a skill pályaelemet 
+		használ, azaz letesz egy bombát arra a koordinátára, ahol a skill elnyomásának pillanatában állt a player.*/
+		player.skill0started = false;
+		
+	}
 
 	/*Ez a metódus hívódik meg aktiváláskor.*/
 	@Override
@@ -28,6 +39,7 @@ public class Skill0 extends AbstractSkill{
 			player.monitorScreenmanager.skill0useable = false;/*A skillbaron elszürkítjük a képet, ami a skillt képviseli*/
 			player.handler.tile.add(new Bomb((int)player.x,(int) player.y, 32, 32, player.handler));/*Ugyebár ez a skill pályaelemet 
 			használ, azaz letesz egy bombát arra a koordinátára, ahol a skill elnyomásának pillanatában állt a player.*/
+			player.skill0started = true;
 		}
 	}
 
@@ -57,5 +69,7 @@ public class Skill0 extends AbstractSkill{
 	public Rectangle getBounds() {
 		return null;/*A bomba tudja a saját rectanglejét*/
 	}
+
+	
 	
 }

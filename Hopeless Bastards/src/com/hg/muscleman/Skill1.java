@@ -22,12 +22,21 @@ public class Skill1 extends AbstractSkill{
 		this.cdtime = 20;/*20 sec cd ban rajta*/
 	}
 	
+	public void activateSkillByServer(){
+		this.skillStartedMainTime = Game.maintime;
+		isactivated = true;
+		//player.monitorScreenmanager.skill1useable = false;
+		player.skill1started = false;
+		
+	}
+	
 	public void activateSkill(){
 		/*skillaktiválás*/
 		if(this.skillStartedMainTime + this.cdtime < Game.maintime || skillStartedMainTime == 0){
 			this.skillStartedMainTime = Game.maintime;
 			isactivated = true;
 			player.monitorScreenmanager.skill1useable = false;
+			player.skill1started = true;
 		}
 	}
 	

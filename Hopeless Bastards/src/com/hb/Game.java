@@ -20,6 +20,9 @@ public class Game extends Canvas implements Runnable,PropertyChangeListener{
 	private static final long serialVersionUID = 1L;
 	public static int WIDTH;
 	public static int HEIGHT;
+	
+	public int tick =0;
+	public int render = 0;
 
 	public static  int maintime = 0;
 	/*Ez a változó a játék indítása óta eltelt másodpercet tartalmazza.Egy külön szál másopercenként eggyel növeli az értékét.
@@ -45,6 +48,7 @@ public class Game extends Canvas implements Runnable,PropertyChangeListener{
 		HEIGHT = dim.height;
 		WIDTH = dim.width;
 
+		
 		setPreferredSize(dim);
 		setMaximumSize(dim);
 		setMinimumSize(dim);
@@ -82,7 +86,6 @@ public class Game extends Canvas implements Runnable,PropertyChangeListener{
 		addMouseWheelListener(state);
 	}
 	
-	
 	private synchronized void start(){
 		/*Szál indítása*/
 		if(running){
@@ -95,6 +98,7 @@ public class Game extends Canvas implements Runnable,PropertyChangeListener{
 	
 	private synchronized void stop(){
 		if(!running){
+			
 			return;
 		}
 		running = false;
@@ -134,55 +138,55 @@ public class Game extends Canvas implements Runnable,PropertyChangeListener{
 	public void run() {
 	       boolean runFlag = true;
 	       double delta = 0.016;
-	       init();
+	      // init();
 	       
 	       	timer.start();
 	       	
 	        // convert the time to seconds
-	        double nextTime = (double)System.nanoTime() / 1000000000.0;
+	        double nextTime = (double)System.nanoTime() / 1000000000.0;/*az idõ másodpercben*/
 	        double maxTimeDiff = 0.5;
 	        int skippedFrames = 1;
 	        int maxSkippedFrames = 5;
-	        while(runFlag)
-	        {
+	        while(runFlag){
 	            // convert the time to seconds
 	            double currTime = (double)System.nanoTime() / 1000000000.0;
-	            if((currTime - nextTime) > maxTimeDiff) nextTime = currTime;
-	            if(currTime >= nextTime)
-	            {
+	            if((currTime - nextTime) > maxTimeDiff){
+	            	nextTime = currTime;
+	            }
+	            if(currTime >= nextTime){
 	                // assign the time for the next update
 	                nextTime += delta;
 	                tick();
-	                if((currTime < nextTime) || (skippedFrames > maxSkippedFrames))
-	                {
+	               // tick++;
+	                if((currTime < nextTime) || (skippedFrames > maxSkippedFrames)){
 	                    render();
+	                   // render++;
 	                    skippedFrames = 1;
-	                }
-	                else
-	                {
+	                }else{
 	                    skippedFrames++;
 	                }
-	            }
-	            else
-	            {
+	            }else{
 	                // calculate the time to sleep
 	                int sleepTime = (int)(1000.0 * (nextTime - currTime));
-	                // sanity check
+	                // ébresztés ellenõrzés
 	                if(sleepTime > 0)
 	                {
-	                    // sleep until the next update
+	                    // sleep until the next update(következõ tick hívásik altatni a szálat)
 	                    try
 	                    {
 	                        Thread.sleep(sleepTime);
 	                    }
 	                    catch(InterruptedException e)
 	                    {
-	                        // do nothing
+	                       //itt ne csináljon semmit
 	                    }
 	                }
 	            }
+	           
+				/*System.out.println("tick: " + tick);
+		        System.out.println("render: " + render);*/
 	        }
-
+	        
 		stop();
 	}
 	

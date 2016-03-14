@@ -20,6 +20,32 @@ public class EntityList<X extends Entity> {
 		
 	}
 	
+	public X getById(String id){
+		Player en = null;
+		for(int i=0;i<list.size();i++){
+			en = (Player)list.get(i);
+			if(en.networkId.equals(id)){
+				
+				return (X) en;
+			}
+		}
+		return null;
+	}
+	
+	public void removeById(String id){
+		Player p = null;
+		int count = 0;
+		for(int i=0;i<list.size();i++){
+			p = (Player)list.get(i);
+			if(p.networkId.equals(id)){
+				count = i;
+				break;
+				
+			}
+		}
+		list.remove(count);
+	}
+	
 	public int size(){
 		return list.size();
 	}

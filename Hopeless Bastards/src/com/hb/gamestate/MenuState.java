@@ -30,8 +30,8 @@ public class MenuState extends GameState{
 	public void init() {
 		/*A gombok példányosítása úgy,hogy megadjuk a koordinátákat, és a nextGameState-t,hogy melyik gomb,melyik GameState-ra
 		 navigálja az alkalmazást.*/
-		startGame = new GameStateButton(Game.WIDTH/3, Game.HEIGHT/3,300,50, new Handler(gsm),this,"START GAME", gsm);
-		options = new GameStateButton(Game.WIDTH/3, Game.HEIGHT/3 + 100,300,50, new Handler(gsm),this,"OPTIONS", gsm);
+		startGame = new GameStateButton(Game.WIDTH/3, Game.HEIGHT/3,300,50, GameStateId.HANDLER,this,"START GAME", gsm);
+		options = new GameStateButton(Game.WIDTH/3, Game.HEIGHT/3 + 100,300,50, null,this,"OPTIONS", gsm);
 		exit = new GameStateButton(Game.WIDTH/3, Game.HEIGHT/3 + 200,300,50, null,this,"EXIT", gsm);
 	}
 
