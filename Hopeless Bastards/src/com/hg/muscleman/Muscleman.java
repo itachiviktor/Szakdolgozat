@@ -405,7 +405,7 @@ public class Muscleman extends Player{
 			}
 		}*/
 	    if(this.id == Id.PLAYER){
-	    	updateServer();
+	    	//updateServer();
 	    }
 	}
 	

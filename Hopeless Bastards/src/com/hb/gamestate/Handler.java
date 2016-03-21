@@ -74,8 +74,9 @@ public class Handler extends GameState {
 	
 	@Override
 	public void init() {
-		connectSocket();
-		configSocketEvents();
+		/*connectSocket();
+		configSocketEvents();*/
+		
 		//random = new Random();
 		/*a pálya elõállító metódus,ami azt a képet tartalmazza,amiben minden pixel egy pályaelem.*/
 		createLevel(ImageAssets.image);
@@ -375,9 +376,9 @@ public class Handler extends GameState {
 		}
 		
 		//addEnemy(new Muscleman(1500,1500,63,63,Id.ENEMYPLAYER,this));
-		/*for(int i=0;i<25;i++){
-			addEntity(new Zombie(i*68+1000, i*68+1000, 63, 63,Id.ZOMBIE,trade,this));
-		}*/
+		for(int i=0;i<25;i++){
+			addEntity(new Zombie(i*68+1000, i*68+1000, 63, 63,Id.ZOMBIE,,this));
+		}
 		addTile(new ManaPotion(1200, 1300, 32, 32, this, "mana", 2, ImageAssets.manapotion.getBufferedImage()));
 		
 		//entityTrade();		
@@ -527,7 +528,8 @@ public class Handler extends GameState {
 
 	private void connectSocket() {
 		try{
-			socket = IO.socket("mat76.mat.uni-miskolc.hu:8080");
+			socket = IO.socket("http://bastards.herokuapp.com/");
+			//socket = IO.socket("http://localhost:8080");
 			socket.connect();
 		}catch(Exception e){
 			e.getMessage();
