@@ -190,9 +190,13 @@ public class Muscleman extends Player{
 	    		double healthpercent = (double)this.health / (double)this.maxHealth;
 	    		g2d.setColor(Color.green);
 	    		g2d.fillRect((int)x + 1, (int)y - 19, (int)((double)width * healthpercent), 9);
-	    		g2d.drawString("" + this.health,(int)x +30 ,(int)y - 100 );
+	    		
 	    		
 	    	}
+	    	
+	    	g2d.drawString("" + this.health,(int)x +30 ,(int)y - 100 );
+	    	
+	    	
 		    g2d.rotate(Math.toRadians(angle), x + width/2,
 		          y + height / 2);
 		    
@@ -332,7 +336,10 @@ public class Muscleman extends Player{
 	    }
 	    
 	    if(dead){
-	    	System.exit(0);
+	    	if(this.id == Id.PLAYER){
+	    		System.exit(0);
+	    	}
+	    	
 	    	/* g2d.rotate(Math.toRadians(angle), x + width/2,
 			          y + height / 2);
 	    	 if(playerframePerSec < 11 && playerframePerSec > 8 ){
@@ -405,7 +412,7 @@ public class Muscleman extends Player{
 			}
 		}*/
 	    if(this.id == Id.PLAYER){
-	    	//updateServer();
+	    	updateServer();
 	    }
 	}
 	
@@ -534,10 +541,9 @@ public class Muscleman extends Player{
 	 }
 	 
 	 @Override
-		public Rectangle getCollisionArea() {
-			
+	 public Rectangle getCollisionArea() {	
 		 return new Rectangle((int)x+4, (int)y+4, width-8, height-8);
-		}
+	 }
 
 	public void keyPressed(int key) {
 		
