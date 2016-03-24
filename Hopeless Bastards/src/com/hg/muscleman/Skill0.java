@@ -21,7 +21,7 @@ public class Skill0 extends AbstractSkill{
 		this.skillStartedMainTime = Game.maintime;/*A skillkezdési idõt beállítom a játék fõidejére*/
 		isactivated = true;/*aktívnak tekintjük innentõl a skillt*/
 		//player.monitorScreenmanager.skill0useable = false;
-		player.handler.tile.add(new Bomb((int)player.x,(int) player.y, 32, 32, player.handler));/*Ugyebár ez a skill pályaelemet 
+		player.handler.tile.add(new Bomb((int)player.x,(int) player.y, 32, 32,this.player, player.handler));/*Ugyebár ez a skill pályaelemet 
 		használ, azaz letesz egy bombát arra a koordinátára, ahol a skill elnyomásának pillanatában állt a player.*/
 		player.skill0started = false;
 		
@@ -37,7 +37,7 @@ public class Skill0 extends AbstractSkill{
 			this.skillStartedMainTime = Game.maintime;/*A skillkezdési idõt beállítom a játék fõidejére*/
 			isactivated = true;/*aktívnak tekintjük innentõl a skillt*/
 			player.monitorScreenmanager.skill0useable = false;/*A skillbaron elszürkítjük a képet, ami a skillt képviseli*/
-			player.handler.tile.add(new Bomb((int)player.x,(int) player.y, 32, 32, player.handler));/*Ugyebár ez a skill pályaelemet 
+			player.handler.tile.add(new Bomb((int)player.x,(int) player.y, 32, 32,this.player, player.handler));/*Ugyebár ez a skill pályaelemet 
 			használ, azaz letesz egy bombát arra a koordinátára, ahol a skill elnyomásának pillanatában állt a player.*/
 			player.skill0started = true;
 		}

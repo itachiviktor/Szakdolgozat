@@ -5,6 +5,7 @@ import java.awt.Rectangle;
 import com.hb.Id;
 import com.hb.entity.DamagingText;
 import com.hb.entity.Entity;
+import com.hb.entity.Player;
 import com.hb.gamestate.Handler;
 import com.hb.graphics.ImageAssets;
 import com.hb.tile.Tile;
@@ -25,9 +26,12 @@ public class Bomb extends Tile{
 	private int framePerSec = 0;
 	private int frame = 0;
 	
-	public Bomb(int x, int y, int width, int height,Handler handler) {
+	public Player player = null;
+	
+	public Bomb(int x, int y, int width, int height,Player player,Handler handler) {
 		super(x, y, width, height, false, Id.BOMB, handler);
 		this.damagingarea = new Rectangle(x,y,width,height);
+		this.player = player;
 	}
 
 	@Override
@@ -40,11 +44,39 @@ public class Bomb extends Tile{
 		if(!firerender){
 			for(int i=0;i<handler.entity.size();i++){
 				Entity en = handler.entity.get(i);
-				if(en.getId() != Id.PLAYER && en.getDamagedArea().intersects(this.damagingarea)){
-					en.setHealth(-100);
+				
+				if(en.id == Id.PLAYER){
+					Player ene = (Player)handler.entity.get(i);
+					if(!(ene.networkId.equals(player.networkId)) && ene.getDamagedArea().intersects(this.damagingarea)){
+						ene.setHealth(-100);
+						/*Ez az animált támadásfelirat*/
+						handler.damagetext.add(new DamagingText(ene.x, ene.y, String.valueOf(100),true, handler));
+						damagedEnemy = ene;/*mostmár tudjuk ki a szenvedõ fél, melyik entitás rohant bele,ezért értékül is adjuk*/
+						firerender = true;/*ezután elkezdõdhet az égés animûlása*/
+						break;
+					}
+				}else{
+					Entity ene = handler.entity.get(i);
+					if(ene.getDamagedArea().intersects(this.damagingarea)){
+						ene.setHealth(-100);
+						/*Ez az animált támadásfelirat*/
+						handler.damagetext.add(new DamagingText(ene.x, ene.y, String.valueOf(100),true, handler));
+						damagedEnemy = ene;/*mostmár tudjuk ki a szenvedõ fél, melyik entitás rohant bele,ezért értékül is adjuk*/
+						firerender = true;/*ezután elkezdõdhet az égés animûlása*/
+						break;
+					}
+				}
+				
+				
+			}
+			
+			for(int i=0;i<handler.enemies.size();i++){
+				Player ene = (Player)handler.enemies.get(i);
+				if(!(ene.networkId.equals(player.networkId)) && ene.getDamagedArea().intersects(this.damagingarea)){
+					ene.setHealth(-100);
 					/*Ez az animált támadásfelirat*/
-					handler.damagetext.add(new DamagingText(en.x, en.y, String.valueOf(100),true, handler));
-					damagedEnemy = en;/*mostmár tudjuk ki a szenvedõ fél, melyik entitás rohant bele,ezért értékül is adjuk*/
+					handler.damagetext.add(new DamagingText(ene.x, ene.y, String.valueOf(100),true, handler));
+					damagedEnemy = ene;/*mostmár tudjuk ki a szenvedõ fél, melyik entitás rohant bele,ezért értékül is adjuk*/
 					firerender = true;/*ezután elkezdõdhet az égés animûlása*/
 					break;
 				}

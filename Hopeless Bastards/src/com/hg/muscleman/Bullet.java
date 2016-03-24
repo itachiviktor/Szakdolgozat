@@ -166,7 +166,7 @@ public class Bullet {
 		    területében ,akkor sebez,és a golyót eltüntetjük a player golyó listájából,ezálltal nem létezik tovább.*/
 		   for(int i=0;i<handler.entity.size();i++){
 			   Entity en = handler.entity.get(i);
-			   if(en.id != Id.PLAYER && en.getPolygon().contains(this.bulletDamageAreaCenter())){
+			   if(en.getPolygon().contains(this.bulletDamageAreaCenter())){
 				   /*Itt megvizsgálom,hogy a playerhez tartozó buff rajta van-e,mert ha igen,akkor többet sebez a golyó.*/
 				   if(player.skills[1].isactivated){
 					   en.setHealth(- this.dealingDamage * 10);
@@ -182,7 +182,7 @@ public class Bullet {
 		   
 		   for(int i=0;i<handler.enemies.size();i++){
 			   Player en = handler.enemies.get(i);
-			   if(en.id != Id.PLAYER && en.getPolygon().contains(this.bulletDamageAreaCenter())){
+			   if(!(en.networkId.equals(player.networkId)) && en.getPolygon().contains(this.bulletDamageAreaCenter())){
 				   /*Itt megvizsgálom,hogy a playerhez tartozó buff rajta van-e,mert ha igen,akkor többet sebez a golyó.*/
 				   if(player.skills[1].isactivated){
 					   en.setHealth(- this.dealingDamage * 10);

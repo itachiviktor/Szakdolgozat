@@ -74,15 +74,27 @@ public class Skill6 extends AbstractSkill{
 		
 				for(int i=0;i<player.handler.entity.size();i++){
 					Entity en = player.handler.entity.get(i);
-					if(en.getId()!= Id.PLAYER && en.getDamagedArea().intersects(this.damagingArea)){
-						en.setHealth(-400);
-						player.handler.damagetext.add(new DamagingText(en.x, en.y, String.valueOf(400),true, player.handler));
-					}	
+					if(en.id == Id.PLAYER){
+						Player ene = (Player)player.handler.entity.get(i);
+
+						if(!(ene.networkId.equals(player.networkId)) && ene.getDamagedArea().intersects(this.damagingArea)){
+							ene.setHealth(-400);
+							player.handler.damagetext.add(new DamagingText(ene.x, ene.y, String.valueOf(400),true, player.handler));
+						}
+					}else{
+						Entity ene = player.handler.entity.get(i);
+						if(ene.getDamagedArea().intersects(this.damagingArea)){
+							ene.setHealth(-400);
+							player.handler.damagetext.add(new DamagingText(ene.x, ene.y, String.valueOf(400),true, player.handler));
+						}
+					}
+					
+						
 				}
 				
 				for(int i=0;i<player.handler.enemies.size();i++){
 					Player en = player.handler.enemies.get(i);
-					if(en.getId()!= Id.PLAYER && en.getDamagedArea().intersects(this.damagingArea)){
+					if(!(en.networkId.equals(player.networkId)) && en.getDamagedArea().intersects(this.damagingArea)){
 						en.setHealth(-400);
 						player.handler.damagetext.add(new DamagingText(en.x, en.y, String.valueOf(400),true, player.handler));
 					}	
