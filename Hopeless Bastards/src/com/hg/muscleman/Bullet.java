@@ -164,6 +164,10 @@ public class Bullet {
 	   public void tick(){
 		   /*Végigmegy az összes entitáson,és ha ütkötik valamelyikkel,azaz a golyó középpontja benne van az entitás négyszög
 		    területében ,akkor sebez,és a golyót eltüntetjük a player golyó listájából,ezálltal nem létezik tovább.*/
+		   
+		   /*Végignézzük az entityben lévõ és az enmy listában lévõ elemeket , hogy ütközött-e valamelyikkel.
+		    Az entityben azért nem kell megvizsgálni, hogy playerrel ütközött-e, mert amelyik player kilõtte,
+		    azzal ez sosem fog érintkezni, hisz a pisztoly csõbõl jön ki.*/
 		   for(int i=0;i<handler.entity.size();i++){
 			   Entity en = handler.entity.get(i);
 			   if(en.getPolygon().contains(this.bulletDamageAreaCenter())){
@@ -182,6 +186,12 @@ public class Bullet {
 		   
 		   for(int i=0;i<handler.enemies.size();i++){
 			   Player en = handler.enemies.get(i);
+			   /*Csak azzal ez enemyvel ütközhet, amelyik nem lõtte ki a golyót, tehát mivel
+			    tudom hogy a player adattagba van eltárolva az a muscleman, aki kilõtte a golyót.
+			    Ha ez az enemy nem egyenlõ azzal aki kilõtte a golyót, és még ütközik
+			    is a golyóval akkor sebzést kap.(networkid vizsgálat, arra nézve , hogy a golyó
+			    tulajdonosa vajon megegyezik e az aktuálisan vizsgált enemy-vel.)*/
+			   
 			   if(!(en.networkId.equals(player.networkId)) && en.getPolygon().contains(this.bulletDamageAreaCenter())){
 				   /*Itt megvizsgálom,hogy a playerhez tartozó buff rajta van-e,mert ha igen,akkor többet sebez a golyó.*/
 				   if(player.skills[1].isactivated){

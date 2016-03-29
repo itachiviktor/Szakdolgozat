@@ -26,6 +26,8 @@ public class Bomb extends Tile{
 	private int framePerSec = 0;
 	private int frame = 0;
 	
+	/*Itt beállítjuk azt a playert(Muscleman), aki lerakta a bombát, azaz tudjuk, hogy ez a lerakott
+	 bomba kihez tartozik, tehát ezt és ennek csapattársait nem sebezheti ez a bomba.*/
 	public Player player = null;
 	
 	public Bomb(int x, int y, int width, int height,Player player,Handler handler) {
@@ -45,6 +47,15 @@ public class Bomb extends Tile{
 			for(int i=0;i<handler.entity.size();i++){
 				Entity en = handler.entity.get(i);
 				
+				/*Az alábbi elágazásra azért van szükség, mert a player ami a mi gépünk az irányított
+				 karakter, az az entity listában van, és két esetet különböztetek el
+				 (Muszály azt az esetet is kezelnünk, hogy mivan ha a mi karakterünknek ez
+				 ellenséges bomba, akkor fel kell robbanjon):
+				 -ha az entitás a mi irányított karakterünk, akkor megvizsgáljuk, hogy a bomba tulajdonos
+				 is mi vagyunk-e(ezt networkid alapján összemérem), mert ha nem, és a területe
+				 a karakternek és a bombának egybevág, akkor fel kell robbanjak
+				 -Ha valamely entitás(zombi,stb) rohan bele, akkor csak azt kell megnézni , hogy ütköztek
+				 -e(majd késõbb barátságos zombik miatt kell ellenõrzést végezni)*/
 				if(en.id == Id.PLAYER){
 					Player ene = (Player)handler.entity.get(i);
 					if(!(ene.networkId.equals(player.networkId)) && ene.getDamagedArea().intersects(this.damagingarea)){
@@ -70,6 +81,10 @@ public class Bomb extends Tile{
 				
 			}
 			
+			/*Ha ide eljut a vezérlés az azt jelenti, hogy sem az adott kliens, sem egy zombi nem szaladt
+			 bele a bombába, tehát megvizsgáljuk, az ellenséges karakterek listáját.Itt is megnézzük, 
+			 hogy ez a karakter tulajdonosa-e a bombának(vagy késõbb barát raktee le), mert ha nem, és
+			 beleszalad akkor sebzõdni fog.*/
 			for(int i=0;i<handler.enemies.size();i++){
 				Player ene = (Player)handler.enemies.get(i);
 				if(!(ene.networkId.equals(player.networkId)) && ene.getDamagedArea().intersects(this.damagingarea)){

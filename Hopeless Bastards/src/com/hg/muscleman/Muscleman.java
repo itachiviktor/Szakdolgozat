@@ -26,6 +26,8 @@ import com.hb.math.RotateViktor;
 
 public class Muscleman extends Player{
 	
+	public boolean update = true;
+	
 	public Muscleman(double x, double y, int width, int height, Id id,String networkId, Handler handler) {
 		super(x, y, width, height, id,networkId, handler);
 	
@@ -419,6 +421,7 @@ public class Muscleman extends Player{
 	public void updateServer(){
 		
 		if(true){
+			update = false;
 			JSONObject data = new JSONObject();
 			try{
 					data.put("id",this.networkId);
@@ -466,6 +469,8 @@ public class Muscleman extends Player{
 			}
 			
 		
+		}else{
+			update = true;
 		}
 	}
 

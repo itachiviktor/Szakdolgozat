@@ -397,7 +397,7 @@ public class Handler extends GameState {
 			public void call(Object... arg0) {
 				JSONObject data = (JSONObject)arg0[0];
 				try{
-					//System.out.println("socketid");
+					System.out.println("socketid");
 					String id = data.getString("id");
 					
 					addEntity(new Muscleman(1600,1600,63,63,Id.PLAYER,id,Handler.this));

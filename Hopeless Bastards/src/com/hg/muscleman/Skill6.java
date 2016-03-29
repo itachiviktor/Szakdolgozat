@@ -72,9 +72,18 @@ public class Skill6 extends AbstractSkill{
 	public void tick(){
 		if(isactivated){
 		
+			/*Ha aktiválva van a képesség, akkor ugyebár ellenõrzést kell végeznünk(ez csak 1 adott pillanatban
+			 sebez), hogy mely entitásokat érint a robbanás.*/
+			
+			/*Elõször az entitásokat ellenõrizzük végig.(Itt nem mozgo játékososk(pl zombi), és
+			 az adott user karaktere található.)*/
 				for(int i=0;i<player.handler.entity.size();i++){
 					Entity en = player.handler.entity.get(i);
 					if(en.id == Id.PLAYER){
+						
+						/*Ha az adott user playere a vizsgált elem, és az nem az a karakter, aki a skillt
+						 használta és benne van a hatókörben , akkor sebzõdnie kell(késõbb barátságos
+						 karakterekre ez nyilván nem fog hatni.)*/
 						Player ene = (Player)player.handler.entity.get(i);
 
 						if(!(ene.networkId.equals(player.networkId)) && ene.getDamagedArea().intersects(this.damagingArea)){
