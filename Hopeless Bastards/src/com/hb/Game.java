@@ -6,10 +6,24 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferStrategy;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.IOException;
+
 import javax.swing.JFrame;
+
+import org.ini4j.InvalidFileFormatException;
+import org.ini4j.Wini;
+
 import com.hb.gamestate.GameState;
 import com.hb.gamestate.MenuState;
 import com.hb.graphics.ImageAssets;
@@ -21,8 +35,18 @@ public class Game extends Canvas implements Runnable,PropertyChangeListener{
 	public static int WIDTH;
 	public static int HEIGHT;
 	
-	public int tick =0;
+	public static JFrame frame;
+	
+	public int tick = 0;
 	public int render = 0;
+	
+	/*Ez az alábbi négy érték összetartozik, azért kell belõlük 2x2, mert statikus metódusban is
+	 felszeretném használni az értékét.A bal felsõ sarokhoz képest hány pixellel az x,y iránxba tolódik el
+	 a kijelzõ.*/
+	public int BoundX = 700;
+	public int BoundY = 0;
+	public static int BoundXS = 700;
+	public static int BoundYS = 0;
 
 	public static  int maintime = 0;
 	/*Ez a változó a játék indítása óta eltelt másodpercet tartalmazza.Egy külön szál másopercenként eggyel növeli az értékét.
@@ -41,17 +65,38 @@ public class Game extends Canvas implements Runnable,PropertyChangeListener{
 	private OneSecTimer timer = new OneSecTimer();/*Ugye ebbõl a szálból indítom majd a másodpercszámláló szálat,ezért itt 
 	inicializálódik az objektuma.*/
 	
-	
+	public String serverURL;
+	private BufferStrategy bs;
+	private Graphics g;
 	
 	public Game() {
-		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();/*A képernyõ méretét kérem le*/
-		HEIGHT = dim.height;
-		WIDTH = dim.width;
+		Wini ini;
+		try {
+			ini = new Wini(new File("./config.ini"));
+			serverURL = ini.get("Game", "serverURL", String.class);
+	        boolean fullScreenMode = ini.get("Game", "fullScreenMode", boolean.class);
 
+		} catch (InvalidFileFormatException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        
 		
+		
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();/*A képernyõ méretét kérem le*/
+		/*HEIGHT = dim.height;
+		WIDTH = dim.width;*/
+	
+		HEIGHT = 700;
+		WIDTH = 600;
+		
+		dim = new Dimension(WIDTH,HEIGHT);
+
 		setPreferredSize(dim);
 		setMaximumSize(dim);
 		setMinimumSize(dim);
+		setBounds(BoundX, BoundY, WIDTH, HEIGHT);
 		
 		states = new GameStateList();
 		
@@ -61,7 +106,7 @@ public class Game extends Canvas implements Runnable,PropertyChangeListener{
 		beállítani rá.Viszont azt nem tudhatja,hogy a player mire mit csinál meg a gombok.Viszont a GameState az tudja, ezért
 		a GameState osztályok implementálják az összes Listenert, és ezért az aktuális GameState átadva az initListeners osztálynak
 		beállítja a Canvasra az õ figyelõit,tehát az fog történni kattintásra , stb.. amit abban a GameStateban definiáltam,hisz
-		mindíg az aktuális GameState tudja mi történhet magával.*/
+		mindig az aktuális GameState tudja mi történhet magával.*/
 	}
 	
 	private void init(){
@@ -74,10 +119,52 @@ public class Game extends Canvas implements Runnable,PropertyChangeListener{
 		/*Ha változás történik a GameState Listában, akkor értesül ez az osztály és ez a metódus hívódik meg,
 		 ez pedig azt csinálja,hogy a Canvashez az új GameState eseménykezelõit állítja be.*/
 		if(evt.getPropertyName().equals("GameStateChange")){
-			initListeners((GameState)evt.getNewValue());
+			initListeners((GameState)evt.getNewValue(),(GameState)evt.getOldValue());
 		}
 	}
 	
+	public void deleteListeners(GameState oldstate){
+		KeyListener key = oldstate;
+		
+		removeKeyListener(key);
+		
+	}
+	
+	private void initListeners(GameState state,GameState oldstate){
+		/*A Canvashez a paraméterben kapott GameState eseménykezelõit állítja be.*/
+		
+		
+		
+		/*
+					 You can consider 3 approaches:
+			
+			1) Save reference to your listener before adding it so you can remove it later:
+			
+			MouseListener ml = new MouseAdapter() {
+			    public void mouseClicked(java.awt.event.MouseEvent evt) {
+			        chatInputMouseClicked(evt);
+			    }
+			};
+			chatInput.addMouseListener (ml);
+			...
+			chatInput.removeMouseListener (ml);
+		 */
+		KeyListener key = oldstate;
+		MouseListener m1 = oldstate;
+		MouseMotionListener m2 = oldstate;
+		MouseWheelListener m3 = oldstate;
+		
+		removeKeyListener(key);
+		removeMouseListener(m1);
+		removeMouseMotionListener(m2);
+		removeMouseWheelListener(m3);
+		
+		
+		addKeyListener(state);
+		addMouseListener(state);
+		addMouseMotionListener(state);
+		addMouseWheelListener(state);
+	}
 	private void initListeners(GameState state){
 		/*A Canvashez a paraméterben kapott GameState eseménykezelõit állítja be.*/
 		addKeyListener(state);
@@ -112,14 +199,12 @@ public class Game extends Canvas implements Runnable,PropertyChangeListener{
 	public void render(){
 		
 		
-		BufferStrategy bs = getBufferStrategy();
+		bs = getBufferStrategy();
 		if(bs == null){
 			createBufferStrategy(3);
 			return;
 		}
-		Graphics g = bs.getDrawGraphics();
-		/*A fenti pás sor bufferelt kirajzolást enged,tehát amiíg vmi kirajzolódik a képernyõre addig a buffer tartalma is
-		 rajzolódik,majd már csak be kell cserélni.3 bufferbõl dolgozunk.*/
+		g = bs.getDrawGraphics();
 		
 		/*Az aktuális GameState render metódusát hívjuk meg*/
 		states.get(0).render(g);
@@ -203,7 +288,7 @@ public class Game extends Canvas implements Runnable,PropertyChangeListener{
 		/*A mainben rakom össze a Framet.*/
 		Game game = new Game();
 		
-		JFrame frame = new JFrame();
+		frame = new JFrame();
 		
 		/*Saját egérkurzor beállítása a framehez.*/
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -211,12 +296,41 @@ public class Game extends Canvas implements Runnable,PropertyChangeListener{
 		frame.setUndecorated(true);
 		frame.setCursor(cursor);
 		frame.add(game);
+		frame.setBounds(BoundXS,BoundYS, WIDTH, HEIGHT);
+		
 		
 		frame.pack();
-		frame.setResizable(false);
+		frame.setResizable(true);
 		frame.setVisible(true);
-		frame.setLocationRelativeTo(null);/*emiatt középre kerül az ablak,nem másjoz viszonyítja*/
+		//frame.setLocationRelativeTo(null);/*emiatt középre kerül az ablak,nem másjoz viszonyítja*/
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		frame.addComponentListener(new ComponentListener() {
+			
+			@Override
+			public void componentShown(ComponentEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void componentResized(ComponentEvent arg0) {
+				System.out.println("new size: Width:" + frame.WIDTH + " Height: " + frame.HEIGHT);
+				
+			}
+			
+			@Override
+			public void componentMoved(ComponentEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void componentHidden(ComponentEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		game.start();
 	}
 }

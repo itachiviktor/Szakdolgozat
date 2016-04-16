@@ -64,11 +64,9 @@ public abstract class Player extends Entity{
 	
 	public int framePerSecLimit = 4;
 	
-	public int maxHealth = 1000;
 	
-	public int mana = 450;
-	public int maxMana = 500;
-	
+	public int mana;
+	public int maxMana;
 	
 	
 	public double velocityX = 0;/*velocity- sebesség*/

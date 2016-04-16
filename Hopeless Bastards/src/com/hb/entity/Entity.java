@@ -17,6 +17,7 @@ public abstract class Entity {
 	public int height;
 	
 	public int health;
+	public int maxHealth;
 	
 	public double angle;
 		
@@ -26,6 +27,7 @@ public abstract class Entity {
 	
 	public boolean collideplayer = false;/*playerrel ütközött-e, erre azért van szükség,hogy az ütközésnél
 	fontos tudni,hogy playerrel ütköztem-e.*/
+	private Rectangle rect;
 	
 	public Entity(double x,double y,int width,int height,Id id,Handler handler) {
 		this.x = x;
@@ -35,6 +37,7 @@ public abstract class Entity {
 		
 		this.id = id;
 		this.handler = handler;
+		
 	}
 	
 	
@@ -85,7 +88,10 @@ public abstract class Entity {
 	/*Ez minden entitásnál ugyan úgy kell mûködnie.A contains metódus azt csinálja,hogy kap egy pontot,és megnézi,hogy a rectangle
 	 -jében benne van-e a pont.*/
 	public boolean contains(Point point){
-		Rectangle rect = new Rectangle((int)x,(int)y,width,height);
+		rect.x = (int)x;
+		rect.y = (int)y;
+		rect.width = width;
+		rect.height = height;
 		return rect.contains(point);
 	}
 	public int getHeight() {

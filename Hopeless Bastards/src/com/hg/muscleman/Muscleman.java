@@ -17,6 +17,7 @@ import org.json.JSONObject;
 import com.hb.Collision;
 import com.hb.Game;
 import com.hb.Id;
+import com.hb.entity.Bolt;
 import com.hb.entity.DamagingText;
 import com.hb.entity.Player;
 import com.hb.gamestate.Handler;
@@ -27,12 +28,18 @@ import com.hb.math.RotateViktor;
 public class Muscleman extends Player{
 	
 	public boolean update = true;
+	private String hashKey = "1a2s3d4f";
+	private Bolt bolt;
 	
 	public Muscleman(double x, double y, int width, int height, Id id,String networkId, Handler handler) {
 		super(x, y, width, height, id,networkId, handler);
 	
 		angle = 0;
-		this.health = 500;
+		this.health = 2000;
+		this.maxHealth = 2000;
+		
+		this.maxMana = 500;
+		this.mana = 450;
 		polygon = getPolygon();
 		px = polygon.xpoints[0];
 		py = polygon.ypoints[0];
@@ -44,6 +51,8 @@ public class Muscleman extends Player{
 		skills[4] = new Skill4(this);/*oseshot*/
 		skills[5] = new Skill5(this);/*doubleshot*/
 		skills[6] = new Skill6(this);/*explosion*/
+		
+		bolt = new Bolt(handler, this);
 	}
 	
 	 public void setAngle(int aa) {
@@ -310,7 +319,7 @@ public class Muscleman extends Player{
 		    // in case you have other things to rotate
 		    g2d.setTransform(old);
 		    
-		   //bolt.render(g);
+		   bolt.render(g);
 		   /* if(firebolt != null){
 		    	g2d.drawPolygon(firebolt.getPolygon());
 		    	  g2d.rotate(Math.toRadians(angle), x + width/2,
@@ -422,8 +431,11 @@ public class Muscleman extends Player{
 		
 		if(true){
 			update = false;
+			
+			
 			JSONObject data = new JSONObject();
 			try{
+					
 					data.put("id",this.networkId);
 					data.put("x", this.x);
 					data.put("y", this.y);
@@ -443,7 +455,7 @@ public class Muscleman extends Player{
 					data.put("skill4started", this.skill4started);
 					data.put("skill5started", this.skill5started);
 					data.put("skill6started", this.skill6started);
-					
+					//data.put("hash", MD5(hashKey + data.toString()));
 					if(this.skill0started){
 						this.skill0started = false;
 					}else if(this.skill1started){
@@ -460,18 +472,28 @@ public class Muscleman extends Player{
 						this.skill6started = false;
 					}
 					
-					handler.socket.emit("playerMoved", data);
-					
-					
-					
+					handler.socket.emit("playerMoved",data);
+						
 			}catch(JSONException e){
 				e.getMessage();
 			}
-			
-		
 		}else{
 			update = true;
 		}
+	}
+	
+	private String MD5(String md5) {
+		   try {
+		        java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
+		        byte[] array = md.digest(md5.getBytes());
+		        StringBuffer sb = new StringBuffer();
+		        for (int i = 0; i < array.length; ++i) {
+		          sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1,3));
+		       }
+		        return sb.toString();
+		    } catch (java.security.NoSuchAlgorithmException e) {
+		    }
+		    return null;
 	}
 
 	public double getX() {
@@ -567,7 +589,7 @@ public class Muscleman extends Player{
 			
 			System.exit(0);
 		}else if(key == KeyEvent.VK_R){
-			//bolt.activateSkill(x + width, y -118, angle, 512, 300);
+			bolt.activateSkill(x + width, y -118, angle, 512, 300);
 		}else if(key == KeyEvent.VK_T){
 			if(firebolt == null){
 				//firebolt = new FireBolt(x + width, y -100, angle, 512, 150, handler, this);

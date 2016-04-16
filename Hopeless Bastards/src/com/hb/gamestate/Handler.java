@@ -1,6 +1,7 @@
 package com.hb.gamestate;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -29,6 +30,7 @@ import com.hb.gamestate.GameState;
 import com.hb.graphics.ImageAssets;
 import com.hb.items.HealthPotion;
 import com.hb.items.ManaPotion;
+import com.hb.textfield.TextField2D;
 import com.hb.tile.Tile;
 import com.hb.tile.Wall;
 import com.hb.tile.WallType;
@@ -67,6 +69,8 @@ public class Handler extends GameState {
 	public boolean leftClick;
 	public boolean rightClick;
 	
+	
+	
 	public Handler(Game gsm) {
 		super(gsm);
 		init();
@@ -83,6 +87,8 @@ public class Handler extends GameState {
 		camera = new Camera();
 
 		/*Kiszedjük a Playert, mivel a createlevel metódusban a pályán a Player is fel van tüntetve ezért, már lérte van hozva.*/
+		
+		
 		
 	}
 	
@@ -376,9 +382,7 @@ public class Handler extends GameState {
 		}
 		
 		//addEnemy(new Muscleman(1500,1500,63,63,Id.ENEMYPLAYER,this));
-		/*for(int i=0;i<25;i++){
-			addEntity(new Zombie(i*68+1000, i*68+1000, 63, 63,Id.ZOMBIE,,this));
-		}*/
+		
 		addTile(new ManaPotion(1200, 1300, 32, 32, this, "mana", 2, ImageAssets.manapotion.getBufferedImage()));
 		
 		//entityTrade();		
@@ -413,6 +417,9 @@ public class Handler extends GameState {
 						if(entity.get(i).id == Id.PLAYER){
 							trade = entity.get(i);
 						}
+					}
+					for(int i=0;i<300;i++){
+						addEntity(new Zombie(i*68+1000, i*68+1000, 63, 63,Id.ZOMBIE,player,Handler.this));
 					}
 				}catch(JSONException e){
 					e.getMessage();
@@ -528,8 +535,8 @@ public class Handler extends GameState {
 
 	private void connectSocket() {
 		try{
-			socket = IO.socket("http://bastards.herokuapp.com/");
-			//socket = IO.socket("http://localhost:8080");
+			//socket = IO.socket(gsm.serverURL);
+			socket = IO.socket("http://localhost:8080");
 			socket.connect();
 		}catch(Exception e){
 			e.getMessage();
@@ -569,6 +576,7 @@ public class Handler extends GameState {
 			leftClick = false;
 			rightClick = true;
 		}
+		
 	}
 
 	@Override
@@ -588,15 +596,25 @@ public class Handler extends GameState {
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		mouseMovedX = e.getXOnScreen();
-		mouseMovedY = e.getYOnScreen();
+		/*Miért kell kivonni belõle a BoundX,Y értékeket?
+		 Azért mert ha elvan tolva 0,0 sarokból az ablak, mondjuk 100,100 ba Bounddal, akkor
+		 az egérkattintást is arrébb kell tolni, hisz ez a képernyõn lévõ egérkoordinátát adja,
+		  azaz 100,100-on van az egér, akkor az a canvas 0,0 pont, ezért úgy kaphatom meg
+		  hogy hogyha kivonom belõle.*/
+		mouseMovedX = e.getXOnScreen() - gsm.BoundX;
+		mouseMovedY = e.getYOnScreen() - gsm.BoundY;
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		/*Minden elmozdulásnál kell ,hogy hova mozdult az egér,ezzel majd a tick metódus mindíg dolgozik.*/
-		mouseMovedX = e.getXOnScreen();
-		mouseMovedY = e.getYOnScreen();
+		/*Miért kell kivonni belõle a BoundX,Y értékeket?
+		 Azért mert ha elvan tolva 0,0 sarokból az ablak, mondjuk 100,100 ba Bounddal, akkor
+		 az egérkattintást is arrébb kell tolni, hisz ez a képernyõn lévõ egérkoordinátát adja,
+		  azaz 100,100-on van az egér, akkor az a canvas 0,0 pont, ezért úgy kaphatom meg
+		  hogy hogyha kivonom belõle.*/
+		mouseMovedX = e.getXOnScreen() - gsm.BoundX;
+		mouseMovedY = e.getYOnScreen() - gsm.BoundY;
 	}
 
 	@Override
@@ -610,6 +628,7 @@ public class Handler extends GameState {
 		if(player != null){
 			player.keyPressed(e.getKeyCode());
 		}
+		System.out.println("simakey");
 		
 	}
 
@@ -618,8 +637,7 @@ public class Handler extends GameState {
 		/*player tudja mi történik*/
 		if(player != null){
 			player.keyReleased(e.getKeyCode());
-		}
-		
+		}	
 	}
 
 	@Override
