@@ -9,6 +9,7 @@ import java.awt.Toolkit;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
@@ -112,10 +113,11 @@ public class Game extends Canvas implements Runnable,PropertyChangeListener{
 	private void init(){
 		/*Az init metódus annyit csinál,hogy az aktuális GameState init metódusát hívja meg*/
 		states.get(0).init();
+		/*Ezt a metódust nem használjuk, a Statek a konstruktorkban meghívják az init metódusukat.*/
 	}
 	
 	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
+	public void propertyChange(PropertyChangeEvent evt){
 		/*Ha változás történik a GameState Listában, akkor értesül ez az osztály és ez a metódus hívódik meg,
 		 ez pedig azt csinálja,hogy a Canvashez az új GameState eseménykezelõit állítja be.*/
 		if(evt.getPropertyName().equals("GameStateChange")){
@@ -159,7 +161,6 @@ public class Game extends Canvas implements Runnable,PropertyChangeListener{
 		removeMouseMotionListener(m2);
 		removeMouseWheelListener(m3);
 		
-		
 		addKeyListener(state);
 		addMouseListener(state);
 		addMouseMotionListener(state);
@@ -167,10 +168,12 @@ public class Game extends Canvas implements Runnable,PropertyChangeListener{
 	}
 	private void initListeners(GameState state){
 		/*A Canvashez a paraméterben kapott GameState eseménykezelõit állítja be.*/
-		addKeyListener(state);
-		addMouseListener(state);
+		
+		//addKeyListener(state);
+		/*addMouseListener(state);
 		addMouseMotionListener(state);
-		addMouseWheelListener(state);
+		addMouseWheelListener(state);*/
+		
 	}
 	
 	private synchronized void start(){
@@ -298,39 +301,12 @@ public class Game extends Canvas implements Runnable,PropertyChangeListener{
 		frame.add(game);
 		frame.setBounds(BoundXS,BoundYS, WIDTH, HEIGHT);
 		
-		
 		frame.pack();
 		frame.setResizable(true);
 		frame.setVisible(true);
 		//frame.setLocationRelativeTo(null);/*emiatt középre kerül az ablak,nem másjoz viszonyítja*/
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		frame.addComponentListener(new ComponentListener() {
-			
-			@Override
-			public void componentShown(ComponentEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void componentResized(ComponentEvent arg0) {
-				System.out.println("new size: Width:" + frame.WIDTH + " Height: " + frame.HEIGHT);
-				
-			}
-			
-			@Override
-			public void componentMoved(ComponentEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void componentHidden(ComponentEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
 		game.start();
 	}
 }

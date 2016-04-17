@@ -13,10 +13,6 @@ import com.hb.Game;
 import com.hb.graphics.ImageAssets;
 import com.hb.textfield.TextField2D;
 
-
-
-
-
 public class MenuState extends GameState{
 	/*Fõmenü játékállás*/
 	
@@ -40,7 +36,7 @@ public class MenuState extends GameState{
 		options = new GameStateButton(Game.WIDTH/3, Game.HEIGHT/3 + 100,300,50, null,this,"OPTIONS", gsm);
 		exit = new GameStateButton(Game.WIDTH/3, Game.HEIGHT/3 + 200,300,50, null,this,"EXIT", gsm);
 		
-		textfield = new TextField2D(" ", new Font("Times New Roman",Font.BOLD,20), 0, 0, 300, Color.red,Color.blue, Color.green, Color.yellow, gsm, true);
+		textfield = new TextField2D(" ", new Font("Times New Roman",Font.BOLD,30), 10, 600, 400, Color.red,Color.blue, Color.green, Color.yellow, gsm, true);
 		
 	}
 
@@ -67,7 +63,7 @@ public class MenuState extends GameState{
 		options.render(g);
 		exit.render(g);
 		
-		//textfield.draw(g);
+		textfield.draw(g);
 		
 		/*Az egér démon kéz kirajzolása.*/
 		g.setColor(Color.black);
@@ -85,6 +81,8 @@ public class MenuState extends GameState{
 	public void mouseClicked(MouseEvent e) {
 		/*Ha kattintás történik meghívja a 3 gomb setClicked metódusát,ami ha az egér koordinátája,akkor
 		 aktiválja azt ami a gomb szerepe.*/
+		
+		System.out.println("click");
 		
 		Point point = new Point(e.getX(),e.getY());
 		startGame.setClicked(point);
