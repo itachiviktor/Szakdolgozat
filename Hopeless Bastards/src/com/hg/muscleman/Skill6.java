@@ -17,6 +17,12 @@ public class Skill6 extends AbstractSkill{
 	public Rectangle[] bombs = new Rectangle[8];/*bombák locationja*/
 	private Rectangle damagingArea;/*az a terület ami sebzõdik a skill álltal*/
 	
+	/*segédadattagok, a memória tartalékolása miatt*/
+	private Player enemy;
+	private Entity enem;
+	private Player ene;
+	private Entity en;
+	
 	public Skill6(Player player) {
 		super(player);
 		this.cdtime = 60;
@@ -78,23 +84,20 @@ public class Skill6 extends AbstractSkill{
 			/*Elõször az entitásokat ellenõrizzük végig.(Itt nem mozgo játékososk(pl zombi), és
 			 az adott user karaktere található.)*/
 				for(int i=0;i<player.handler.entity.size();i++){
-					Entity en = player.handler.entity.get(i);
+					en = player.handler.entity.get(i);
 					if(en.id == Id.PLAYER){
 						
-						/*Ha az adott user playere a vizsgált elem, és az nem az a karakter, aki a skillt
-						 használta és benne van a hatókörben , akkor sebzõdnie kell(késõbb barátságos
-						 karakterekre ez nyilván nem fog hatni.)*/
-						Player ene = (Player)player.handler.entity.get(i);
+						ene = (Player)player.handler.entity.get(i);
 
 						if(!(ene.networkId.equals(player.networkId)) && ene.getDamagedArea().intersects(this.damagingArea)){
 							ene.setHealth(-400);
 							player.handler.damagetext.add(new DamagingText(ene.x, ene.y, String.valueOf(400),true, player.handler));
 						}
 					}else{
-						Entity ene = player.handler.entity.get(i);
-						if(ene.getDamagedArea().intersects(this.damagingArea)){
-							ene.setHealth(-400);
-							player.handler.damagetext.add(new DamagingText(ene.x, ene.y, String.valueOf(400),true, player.handler));
+						enem = player.handler.entity.get(i);
+						if(enem.getDamagedArea().intersects(this.damagingArea)){
+							enem.setHealth(-400);
+							player.handler.damagetext.add(new DamagingText(enem.x, enem.y, String.valueOf(400),true, player.handler));
 						}
 					}
 					
@@ -102,10 +105,10 @@ public class Skill6 extends AbstractSkill{
 				}
 				
 				for(int i=0;i<player.handler.enemies.size();i++){
-					Player en = player.handler.enemies.get(i);
-					if(!(en.networkId.equals(player.networkId)) && en.getDamagedArea().intersects(this.damagingArea)){
-						en.setHealth(-400);
-						player.handler.damagetext.add(new DamagingText(en.x, en.y, String.valueOf(400),true, player.handler));
+					enemy = player.handler.enemies.get(i);
+					if(!(enemy.networkId.equals(player.networkId)) && enemy.getDamagedArea().intersects(this.damagingArea)){
+						enemy.setHealth(-400);
+						player.handler.damagetext.add(new DamagingText(enemy.x, enemy.y, String.valueOf(400),true, player.handler));
 					}	
 				}
 		

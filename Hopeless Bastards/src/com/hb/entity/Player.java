@@ -45,6 +45,8 @@ public abstract class Player extends Entity{
 	public boolean dead = false;/*halott-e a player*/
 	public boolean live = true;/*él-e még a player*/
 	
+	public String username = null;
+	
 	public ArrayList<Bullet> bullets = new ArrayList<Bullet>();/*A kilõtt golyókat tároló lista*/
 	public Bolt bolt = null;/*A villám támadás objektum, alapértelmezetten null,majd konstruktorban példányosítom*/
 	public FireBolt firebolt = null;/*Ugyan az a helyzet,mint a boltnál*/
@@ -58,6 +60,8 @@ public abstract class Player extends Entity{
 	public boolean skill6started = false;
 	
 	public String networkId;
+	
+
 	
 	public int playerframe = 0;
 	public int playerframePerSec = 0;

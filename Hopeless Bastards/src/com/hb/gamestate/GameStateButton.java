@@ -24,26 +24,26 @@ public class GameStateButton extends Rectangle{
 	public GameStateId nextGameState;
 	public GameState actualGameState;/*Az aktuális játékhelyzetet is ismernie kell.*/
 	
-	private Game gsm;/*Ismeri a fõ ciklust futtató osztályt is*/
+	public Game gsm;/*Ismeri a fõ ciklust futtató osztályt is*/
 	
-	private boolean heldover;/*A gomb felé van-e tartva az egér*/
+	public boolean heldover;/*A gomb felé van-e tartva az egér*/
 	
-	private boolean clicked;/*A gombra kattintottak-e*/
+	public boolean clicked;/*A gombra kattintottak-e*/
 	
 	public int width;
 	public int height;
 	
-	private Sound mousehover;
+	public Sound mousehover;
 	
-	private boolean initialized = false;
-	private boolean soundplaying = false;/*Alapértelmezetten ne játsza le a gomb soundot*/
+	public boolean initialized = false;
+	public boolean soundplaying = false;/*Alapértelmezetten ne játsza le a gomb soundot*/
 	
 	/*Az alábbi fontrendereres holmik azért kellenek,hogy formázott szöveget tudjunk kirajzolni a képernyõre.*/
-	private FontRenderContext frc;
+	public FontRenderContext frc;
 	
-	private Font fontstyle = new Font("Arial",Font.PLAIN,25);
-	private String text;
-	private TextLayout visualizer;/*megjelenítõ*/
+	public Font fontstyle = new Font("Arial",Font.PLAIN,25);
+	public String text;
+	public TextLayout visualizer;/*megjelenítõ*/
 	
 	public GameStateButton(int x,int y,int width,int height,GameStateId nextGameState,GameState actualGameState,String text,Game gsm) {
 		this.actualGameState = actualGameState;

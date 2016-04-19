@@ -56,6 +56,13 @@ public class Zombie extends Entity{
 	private Point left = new Point();
 	private Point right = new Point();
 
+	private Graphics2D g2d;
+
+	private AffineTransform old;
+	
+	private Rectangle damagedArea = new Rectangle();
+	private Rectangle collisionArea = new Rectangle();
+
 	public Zombie(double x, double y, int width, int height, Id id,Entity trade,
 			Handler handler) {
 		super(x, y, width, height, id, handler);
@@ -72,11 +79,11 @@ public class Zombie extends Entity{
 	public void render(Graphics g) {
 		
 		if(live){
-			Graphics2D g2d = (Graphics2D) g;
+			g2d = (Graphics2D) g;
 		    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 		          RenderingHints.VALUE_ANTIALIAS_ON);
 		    
-		    AffineTransform old = g2d.getTransform();
+		    old = g2d.getTransform();
 	
 		  // g2d.drawPolygon(getPolygon());
 	
@@ -392,13 +399,22 @@ public class Zombie extends Entity{
 
 	@Override
 	public Rectangle getDamagedArea() {
+		damagedArea.x = (int)x+16;
+		damagedArea.y = (int)y+16;
+		damagedArea.width = width-32;
+		damagedArea.height = height-32;
 		
-		return new Rectangle((int)x+16, (int)y+16, width-32, height-32);
+		return this.damagedArea;
+		//return new Rectangle((int)x+16, (int)y+16, width-32, height-32);
 	}
 
 	@Override
 	public Rectangle getCollisionArea() {
-		
-		return new Rectangle((int)x+8, (int)y+8, width-16, height-16);
+		collisionArea.x = (int)x+8;
+		collisionArea.y = (int)y+8;
+		collisionArea.width = width-16;
+		collisionArea.height = height-16;
+		return this.collisionArea;
+		//return new Rectangle((int)x+8, (int)y+8, width-16, height-16);
 	}
 }

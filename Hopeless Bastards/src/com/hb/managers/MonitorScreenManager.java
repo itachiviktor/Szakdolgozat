@@ -198,7 +198,5 @@ public class MonitorScreenManager {
 		g.drawImage(ImageAssets.health,(int)(player.x - Game.WIDTH/2 + 120),(int) player.y - Game.HEIGHT/2 + 43, 151 * player.health/player.maxHealth,32,null);
 		g.drawImage(ImageAssets.mana,(int)(player.x - Game.WIDTH/2 + 101),(int) player.y - Game.HEIGHT/2 + 88, 141*player.mana/player.maxMana,26,null);
 		
-		
 	}
-	
 }

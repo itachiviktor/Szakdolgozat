@@ -35,6 +35,12 @@ public class Bullet {
 	   
 	   public int bulletframe = 0;
 	   public int bulletframePerSec = 0;
+	   
+	   private Player en;
+	   
+	   private Point bulletDamagedCenterPoint = new Point();
+	   private Tile t;
+	   private Entity ene;
 	 
 	   public Bullet(double x, double y, double a, int w, int h,int pipe,Handler handler,Player player) {
 		  this.player = player;
@@ -169,23 +175,23 @@ public class Bullet {
 		    Az entityben azért nem kell megvizsgálni, hogy playerrel ütközött-e, mert amelyik player kilõtte,
 		    azzal ez sosem fog érintkezni, hisz a pisztoly csõbõl jön ki.*/
 		   for(int i=0;i<handler.entity.size();i++){
-			   Entity en = handler.entity.get(i);
-			   if(en.getPolygon().contains(this.bulletDamageAreaCenter())){
+			   ene = handler.entity.get(i);
+			   if(ene.getPolygon().contains(this.bulletDamageAreaCenter())){
 				   /*Itt megvizsgálom,hogy a playerhez tartozó buff rajta van-e,mert ha igen,akkor többet sebez a golyó.*/
 				   if(player.skills[1].isactivated){
-					   en.setHealth(- this.dealingDamage * 10);
+					   ene.setHealth(- this.dealingDamage * 10);
 					   player.bullets.remove(this);
-					   handler.damagetext.add(new DamagingText(en.x, en.y,String.valueOf(this.dealingDamage*10),true, handler));
+					   handler.damagetext.add(new DamagingText(ene.x, ene.y,String.valueOf(this.dealingDamage*10),true, handler));
 				   }else{
-					   en.setHealth(- this.dealingDamage);
+					   ene.setHealth(- this.dealingDamage);
 					   player.bullets.remove(this);
-					   handler.damagetext.add(new DamagingText(en.x, en.y,String.valueOf(this.dealingDamage),true, handler));
+					   handler.damagetext.add(new DamagingText(ene.x, ene.y,String.valueOf(this.dealingDamage),true, handler));
 				   }
 			   }
 		   }
 		   
 		   for(int i=0;i<handler.enemies.size();i++){
-			   Player en = handler.enemies.get(i);
+			   en = handler.enemies.get(i);
 			   /*Csak azzal ez enemyvel ütközhet, amelyik nem lõtte ki a golyót, tehát mivel
 			    tudom hogy a player adattagba van eltárolva az a muscleman, aki kilõtte a golyót.
 			    Ha ez az enemy nem egyenlõ azzal aki kilõtte a golyót, és még ütközik
@@ -208,7 +214,7 @@ public class Bullet {
 		   
 		   /*Végigmegy az összes pályalemen,és ami solid és ütközik a golyóval,az megfogja a golyót,így az nem megy tovább.*/
 		   for(int i=0;i<handler.tile.size();i++){
-			   Tile t = handler.tile.get(i);
+			   t = handler.tile.get(i);
 			   if(t.solid==true && t.getBounds().contains(this.bulletDamageAreaCenter())){
 				   player.bullets.remove(this);
 			   }
@@ -218,8 +224,11 @@ public class Bullet {
 	   public Point bulletDamageAreaCenter(){
 		   /*Visszaadja,hogy a golyónak mely része sebez,azaz a képernyõn mely pontjával kell ütköznie pl a zombienak ,hogy
 		    sebzõdjön.*/
-		   Rectangle rect = this.getBounds();
-		   return new Point(rect.x+width/2,rect.y+height);
+		   
+		   //Rectangle rect = this.getBounds();
+		   this.bulletDamagedCenterPoint.setLocation(this.getBounds().x+width/2,this.getBounds().y+height);
+		   return this.bulletDamagedCenterPoint;
+		   //return new Point(rect.x+width/2,rect.y+height);
 	   }
 	   
 	   /*Az alábbi két metódus polygon középontot számol,különösebb magyarázatot nem fûznék hozzá.*/

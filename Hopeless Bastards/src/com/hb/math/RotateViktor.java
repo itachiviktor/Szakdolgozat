@@ -4,12 +4,18 @@ import java.awt.Point;
 import java.awt.Polygon;
 
 public class RotateViktor {
+	
+private static Point[] p;
+private static Polygon poly;
+private static Point rotatePointHelper = new Point();
+
+
 /*Ez egy általam készített matematikai osztály,amely forgatási számolásokat lát el,statikus szolgálltatásként.*/
 	
 	public static Polygon rotate(Point p1,Point p2,Point p3,Point p4,double angle,int dx,int dy){
 		/*Ez a metódus kap 4 pontot és egy kapott fokkal az utolsó két paraméter mentén elforgatja */
 		
-		Point[] p = new Point[4];
+		p = new Point[4];
 		p[0] = p1;
 		p[1] = p2;
 		p[2] = p3;
@@ -32,7 +38,8 @@ public class RotateViktor {
 	      }
 	      int[] x = {(int) p[0].getX(), (int) p[1].getX(), (int)p[2].getX(), (int) p[3].getX()};
 		  int[] y = {(int) p[0].getY(), (int) p[1].getY(), (int)p[2].getY(), (int) p[3].getY()};
-	      Polygon poly = new Polygon(x, y, x.length);
+		  
+	      poly = new Polygon(x, y, x.length);
 	      return poly;
 	}
 	
@@ -45,7 +52,8 @@ public class RotateViktor {
 		 
 		 p.x+=dx;
 	   	 p.y+=dy;
-		
-		return new Point(p.x,p.y);
+		rotatePointHelper.setLocation(p.x,p.y);
+		return rotatePointHelper;
+		//return new Point(p.x,p.y);
 	}
 }

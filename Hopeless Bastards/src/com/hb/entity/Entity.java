@@ -25,6 +25,8 @@ public abstract class Entity {
 	
 	public Handler handler;
 	
+	private Rectangle entitysRectangle;
+	
 	public boolean collideplayer = false;/*playerrel ütközött-e, erre azért van szükség,hogy az ütközésnél
 	fontos tudni,hogy playerrel ütköztem-e.*/
 	private Rectangle rect;
@@ -37,6 +39,12 @@ public abstract class Entity {
 		
 		this.id = id;
 		this.handler = handler;
+		
+		entitysRectangle = new Rectangle();
+		entitysRectangle.x = (int)this.x;
+		entitysRectangle.y = (int)this.y;
+		entitysRectangle.width = width;
+		entitysRectangle.height = height;
 		
 	}
 	
@@ -100,7 +108,13 @@ public abstract class Entity {
 	
 	public Rectangle getBounds(){
 		/*Magát az entitást adja vissza*/
-		return new Rectangle((int)this.x,(int)this.y,width,height);
+		entitysRectangle.x = (int)this.x;
+		entitysRectangle.y = (int)this.y;
+		entitysRectangle.width = width;
+		entitysRectangle.height = height;
+		return this.entitysRectangle;
+		
+		//return new Rectangle((int)this.x,(int)this.y,width,height);
 	}
 	
 	public abstract Rectangle getDamagedArea();/*Minden entitásnak vissza kell tudni adnia azt a területet, amin sebezhetik õt.*/

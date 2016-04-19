@@ -24,6 +24,10 @@ public abstract class Tile {
 	
 	public Handler handler;
 	
+	private Rectangle boundTile;
+	private Rectangle containCheckHelper;/*ez a referencia módosul, és ezt adjuk vissza, nem mindig egy
+	új referenciát hozunk létre a memóriába.*/
+	
 	public Tile(int x,int y,int width,int height,boolean solid,Id id,Handler handler) {
 		this.x = x;
 		this.y = y;
@@ -32,6 +36,9 @@ public abstract class Tile {
 		this.solid = solid;
 		this.id = id;
 		this.handler = handler;
+		
+		this.boundTile = new Rectangle();
+		this.containCheckHelper = new Rectangle();
 	}
 	
 	public abstract void render(Graphics g);
@@ -42,8 +49,15 @@ public abstract class Tile {
 		handler.removeTile(this);
 	}
 	public boolean contains(Point point){/*Tartalmazás vizsgálat, egy pontra*/
-		Rectangle rect = new Rectangle(x,y,width,height);
-		return rect.contains(point);
+		//Rectangle rect = new Rectangle(x,y,width,height);
+		
+		containCheckHelper.x = x;
+		containCheckHelper.y = y;
+		containCheckHelper.width = width;
+		containCheckHelper.height = height;
+		
+		return containCheckHelper.contains(point);
+		//return rect.contains(point);
 	}
 
 	public int getX() {
@@ -75,6 +89,11 @@ public abstract class Tile {
 	}
 	
 	public Rectangle getBounds(){
-		return new Rectangle(getX(),getY(),width,height);
+		boundTile.x = getX();
+		boundTile.y = getY();
+		boundTile.width = width;
+		boundTile.height = height;
+		return this.boundTile;
+		//return new Rectangle(getX(),getY(),width,height);
 	}	
 }

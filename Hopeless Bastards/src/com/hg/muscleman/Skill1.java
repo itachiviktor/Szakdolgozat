@@ -16,6 +16,9 @@ public class Skill1 extends AbstractSkill{
 
 	private int angle = 0;/*A buffer folymatosan forog a player körül.*/
 	
+	private Graphics2D g2d;
+	private AffineTransform old;
+	
 	public Skill1(Player player) {
 		super(player);
 		this.secWhileActive = 10;/*10 másodpercig aktív a buffer*/
@@ -71,11 +74,11 @@ public class Skill1 extends AbstractSkill{
 		/*Csak akkor rajzolja ki a buffot a player alá,ha acitválva van a skill, és még tart a 10 másodperc.*/
 		if(Game.maintime - this.secWhileActive - skillStartedMainTime <= 0 && this.isactivated){
 			
-			Graphics2D g2d = (Graphics2D) g;
+			g2d = (Graphics2D) g;
 		    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 		          RenderingHints.VALUE_ANTIALIAS_ON);
 		    
-		    AffineTransform old = g2d.getTransform();
+		    old = g2d.getTransform();
 		    /*a player közepe körül forgatunk*/
 		    g2d.rotate(Math.toRadians(angle), (int)player.x + player.width/2 ,(int)player.y + player.height/2);
 		    /*Animáljuk a buffot*/
@@ -101,6 +104,7 @@ public class Skill1 extends AbstractSkill{
 
 	@Override
 	public Rectangle getBounds() {
+		/*Amelyik skill nullt ad vissza erre a felüldefiniálandó metódusra, annak nincs felülete.*/
 		return null;
 	}
 }

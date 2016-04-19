@@ -10,6 +10,8 @@ public class EntityList<X extends Entity> {
 	 tárolni(megvalósítás az ,hogy abstarct metódusokat megvalósítja), na ezzel a megoldással bármilyen mély leszármazást
 	 megoldhatok)*/
 	public List<X> list = new ArrayList<X>();
+	private Player en;
+	private Player p;
 	
 	public void add(X x){
 		list.add(x);
@@ -21,7 +23,7 @@ public class EntityList<X extends Entity> {
 	}
 	
 	public X getById(String id){
-		Player en = null;
+		en = null;
 		for(int i=0;i<list.size();i++){
 			en = (Player)list.get(i);
 			if(en.networkId.equals(id)){
@@ -33,7 +35,7 @@ public class EntityList<X extends Entity> {
 	}
 	
 	public void removeById(String id){
-		Player p = null;
+		p = null;
 		int count = 0;
 		for(int i=0;i<list.size();i++){
 			p = (Player)list.get(i);

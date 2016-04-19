@@ -418,9 +418,9 @@ public class Handler extends GameState {
 							trade = entity.get(i);
 						}
 					}
-					for(int i=0;i<300;i++){
+					/*for(int i=0;i<50;i++){
 						addEntity(new Zombie(i*68+1000, i*68+1000, 63, 63,Id.ZOMBIE,player,Handler.this));
-					}
+					}*/
 				}catch(JSONException e){
 					e.getMessage();
 				}
@@ -469,6 +469,8 @@ public class Handler extends GameState {
 						String id = objects.getJSONObject(i).getString("id");
 						double x = objects.getJSONObject(i).getDouble("x");
 						double y = objects.getJSONObject(i).getDouble("y");
+						
+						
 						System.out.println("getPlayers");
 						enemies.add(new Muscleman(x, y, 63, 63, Id.ENEMYPLAYER, id, Handler.this));
 						
@@ -489,6 +491,7 @@ public class Handler extends GameState {
 					
 						if(enemies.getById(playerId) != null){
 							Player entity = enemies.getById(playerId);
+							entity.username = data.getString("username");
 							entity.x = data.getDouble("x");
 							entity.y = data.getDouble("y");
 							entity.angle = data.getDouble("angle");
@@ -535,8 +538,8 @@ public class Handler extends GameState {
 
 	private void connectSocket() {
 		try{
-			//socket = IO.socket(gsm.serverURL);
-			socket = IO.socket("http://localhost:8080");
+			socket = IO.socket(gsm.serverURL);
+			//socket = IO.socket("http://localhost:8080");
 			socket.connect();
 		}catch(Exception e){
 			e.getMessage();
@@ -628,7 +631,7 @@ public class Handler extends GameState {
 		if(player != null){
 			player.keyPressed(e.getKeyCode());
 		}
-		System.out.println("simakey");
+		//System.out.println("simakey");
 		
 	}
 

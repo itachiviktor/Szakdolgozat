@@ -28,8 +28,24 @@ import com.hb.math.RotateViktor;
 public class Muscleman extends Player{
 	
 	public boolean update = true;
-	private String hashKey = "1a2s3d4f";
+	//private String hashKey = "1a2s3d4f";
 	private Bolt bolt;
+	private Graphics2D g2d;
+	private Bullet tmpB;
+	private AffineTransform old;
+	
+	private Rectangle damagedArea = new Rectangle();
+	private Rectangle collisonArea = new Rectangle();
+	private Rectangle boundsRectangle = new Rectangle();
+	
+	private Point collisionPointHelper1 = new Point();
+	private Point collisionPointHelper2 = new Point();
+	private Point collisionPointHelper3 = new Point();
+	private Point collisionPointHelper4 = new Point();
+	
+	private Point locationOnScreen;
+	
+	
 	
 	public Muscleman(double x, double y, int width, int height, Id id,String networkId, Handler handler) {
 		super(x, y, width, height, id,networkId, handler);
@@ -53,6 +69,8 @@ public class Muscleman extends Player{
 		skills[6] = new Skill6(this);/*explosion*/
 		
 		bolt = new Bolt(handler, this);
+		
+	
 	}
 	
 	 public void setAngle(int aa) {
@@ -74,18 +92,29 @@ public class Muscleman extends Player{
 	       elõre mozgatott karakter ütközik valamivel, akkor oda nem léphet, azaz az x,y -nak az oldx,oldy-t kell
 	       értékül adni azaz vissza az eredeti helyére.A moveBackword is ezen az elven mûködik.Annyi
 	       a különbség, hogy ott a speed a fele ennek az értéknek, hátrafele lasabban tud mozogni, mint elõre.*/
+	      
+	      /*Ezek segéd adattagok, hogy ne new Pointot tolhaj mindig, ami pazarló a memóriára nézve.*/
+	      collisionPointHelper1.setLocation((int)x - 1 , (int)y - 1);
+	      collisionPointHelper2.setLocation((int)x + width + 1 , (int)y - 1);
+	      collisionPointHelper3.setLocation((int)x - 1 , (int)y + height - 1);
+	      collisionPointHelper4.setLocation((int)x  + width - 1 , (int)y + height - 1);
+	      
+	      
 	      if(Collision.PlayerCBlock(
-					new Point((int)x -1 , (int)y - 1),
+					/*new Point((int)x - 1 , (int)y - 1),
 					new Point((int)x + width + 1 , (int)y - 1),
-					new Point((int)x -1 , (int)y + height - 1),
-					new Point((int)x  + width -1 , (int)y + height - 1),handler)){
+					new Point((int)x - 1 , (int)y + height - 1),
+					new Point((int)x  + width - 1 , (int)y + height - 1)*/
+	    		  collisionPointHelper1,collisionPointHelper2,
+	    		  collisionPointHelper3,collisionPointHelper4,handler)){
+	    	  
 	    	  	x = xold;
 				y = yold;
 			}
 	 
 	      if(Collision.EntityCollisionEntity1(getDamagedArea(), this, handler)){
 	    	  x = xold;
-				y = yold;
+	    	  y = yold;
 	      }
 	   }
 
@@ -96,19 +125,26 @@ public class Muscleman extends Player{
 	      x -= Math.cos(Math.toRadians(angle)) * sx;
 	      y -= Math.sin(Math.toRadians(angle)) * sy;
 	      
+	      /*Ezek segéd adattagok, hogy ne new Pointot tolhaj mindig, ami pazarló a memóriára nézve.*/
+	      collisionPointHelper1.setLocation((int)x - 1 , (int)y - 1);
+	      collisionPointHelper2.setLocation((int)x + width + 1 , (int)y - 1);
+	      collisionPointHelper3.setLocation((int)x - 1 , (int)y + height - 1);
+	      collisionPointHelper4.setLocation((int)x  + width - 1 , (int)y + height - 1);
+	      
 	      if(Collision.PlayerCBlock(
-					new Point((int)x -1 , (int)y - 1),
+					/*new Point((int)x -1 , (int)y - 1),
 					new Point((int)x + width + 1 , (int)y - 1),
 					new Point((int)x -1 , (int)y + height - 1),
-					new Point((int)x  + width -1 , (int)y + height - 1),handler)){
+					new Point((int)x  + width -1 , (int)y + height - 1)*/
+	    		  collisionPointHelper1,collisionPointHelper2,
+	    		  collisionPointHelper3,collisionPointHelper4,handler)){
 	    	  	x = xold;
 				y = yold;
-				
 	      }
 	 
 	      if(Collision.EntityCollisionEntity1(getDamagedArea(), this, handler)){
 	    	  x = xold;
-				y = yold;
+	    	  y = yold;
 	      }
 	   }
 	 
@@ -117,14 +153,20 @@ public class Muscleman extends Player{
 	   }
 	   
 	   public Rectangle getBounds() {
-		      return new Rectangle((int) x, (int) y, width, height);
+		   this.boundsRectangle.x = (int) x;
+		   this.boundsRectangle.y = (int) y;
+		   this.boundsRectangle.width = width;
+		   this.boundsRectangle.height = height;
+		   
+		   return this.boundsRectangle;
+		   //return new Rectangle((int) x, (int) y, width, height);
 	   }
 	
 	@Override
 	public void tick(){
 		
 		for(int i = 0; i < bullets.size(); i++) {
-		       Bullet tmpB = bullets.get(i);
+		       tmpB = bullets.get(i);
 
 		       tmpB.moveForward(15);
 		       tmpB.tick();
@@ -137,7 +179,6 @@ public class Muscleman extends Player{
 			}
 			if(down){
 				moveBackword(movementSpeed-3,movementSpeed-3);
-				
 			}
 			if(left){
 				angle -=2;
@@ -178,12 +219,12 @@ public class Muscleman extends Player{
 
 	public void render(Graphics g){
 		
-		Graphics2D g2d = (Graphics2D) g;
+		g2d = (Graphics2D) g;
 	    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 	          RenderingHints.VALUE_ANTIALIAS_ON);
 	    
 	    
-	    AffineTransform old = g2d.getTransform();
+	    old = g2d.getTransform();
 	    
 	    for(int i=0;i<7;i++){
 	    	skills[i].render(g);
@@ -191,7 +232,6 @@ public class Muscleman extends Player{
 		
 	    if(live){
 	 
-	    
 	    	//Point behing500px = RotateViktor.rotatePoint(new Point((int)x+width/2-300, (int)y+height/2), angle, (int)x+width/2,(int)y+height/2);
 			//g2d.drawLine((int)x+width/2,(int)y+height/2,behing500px.x,behing500px.y);
 	    	//g2d.drawPolygon(getPolygon());
@@ -200,13 +240,14 @@ public class Muscleman extends Player{
 	    		g2d.drawRect((int)x, (int)y - 20, width, 10);
 	    		double healthpercent = (double)this.health / (double)this.maxHealth;
 	    		g2d.setColor(Color.green);
-	    		g2d.fillRect((int)x + 1, (int)y - 19, (int)((double)width * healthpercent), 9);
-	    		
+	    		g2d.fillRect((int)x + 1, (int)y - 19, (int)((double)width * healthpercent), 9);	
+	    		if(this.username != null){
+	    			g2d.drawString(this.username,(int)x +100 ,(int)y - 10);
+	    		}
 	    		
 	    	}
 	    	
 	    	g2d.drawString("" + this.health,(int)x +30 ,(int)y - 100 );
-	    	
 	    	
 		    g2d.rotate(Math.toRadians(angle), x + width/2,
 		          y + height / 2);
@@ -374,7 +415,6 @@ public class Muscleman extends Player{
 	    	
 	    	   for (int i = 0; i < bullets.size(); i++) {
 			       Bullet tmpB = (Bullet) bullets.get(i);
-			                      //playing with bullet colors
 			     
 			       g2d.rotate(Math.toRadians(angle), tmpB.getX() + tmpB.getWidth()/2,
 			 	          tmpB.getY() + tmpB.getHeight() / 2);
@@ -432,11 +472,11 @@ public class Muscleman extends Player{
 		if(true){
 			update = false;
 			
-			
 			JSONObject data = new JSONObject();
 			try{
 					
 					data.put("id",this.networkId);
+					data.put("username", handler.gsm.username);
 					data.put("x", this.x);
 					data.put("y", this.y);
 					data.put("angle",this.angle);
@@ -564,12 +604,24 @@ public class Muscleman extends Player{
 	 
 	 @Override
 	 public Rectangle getDamagedArea() {
-		return new Rectangle((int)x+8, (int)y+8, width-16, height-16);
+		 damagedArea.x = (int)x+8;
+		 damagedArea.y = (int)y+8;
+		 damagedArea.width = width-16;
+		 damagedArea.height = height-16;
+		 
+		 return this.damagedArea;
+		//return new Rectangle((int)x+8, (int)y+8, width-16, height-16);
 	 }
 	 
 	 @Override
-	 public Rectangle getCollisionArea() {	
-		 return new Rectangle((int)x+4, (int)y+4, width-8, height-8);
+	 public Rectangle getCollisionArea() {
+		this.collisonArea.x = (int)x+4;
+		this.collisonArea.y = (int)y+4;
+		this.collisonArea.width = width-8;
+		this.collisonArea.height = height-8;
+		
+		return this.collisonArea;
+		//return new Rectangle((int)x+4, (int)y+4, width-8, height-8);
 	 }
 
 	public void keyPressed(int key) {
@@ -629,8 +681,8 @@ public class Muscleman extends Player{
 	public void MousePressed(MouseEvent e){
 		if(e.getButton() == MouseEvent.BUTTON1){
 			
-			Point p = e.getLocationOnScreen();
-			p.setLocation(p.x+handler.getVisibleArea().x, p.y+handler.getVisibleArea().y);
+			locationOnScreen = e.getLocationOnScreen();
+			locationOnScreen.setLocation(locationOnScreen.x+handler.getVisibleArea().x, locationOnScreen.y+handler.getVisibleArea().y);
 			
 			
 			fire = true;

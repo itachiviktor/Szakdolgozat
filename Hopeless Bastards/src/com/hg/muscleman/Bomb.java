@@ -29,6 +29,10 @@ public class Bomb extends Tile{
 	/*Itt beállítjuk azt a playert(Muscleman), aki lerakta a bombát, azaz tudjuk, hogy ez a lerakott
 	 bomba kihez tartozik, tehát ezt és ennek csapattársait nem sebezheti ez a bomba.*/
 	public Player player = null;
+	private Entity entity;
+	private Player ene;
+	private Entity enem;
+	private Player enemy;
 	
 	public Bomb(int x, int y, int width, int height,Player player,Handler handler) {
 		super(x, y, width, height, false, Id.BOMB, handler);
@@ -45,7 +49,7 @@ public class Bomb extends Tile{
 		 vége a fireanimationnak,és utánna megszûnik ez a bomba.*/
 		if(!firerender){
 			for(int i=0;i<handler.entity.size();i++){
-				Entity en = handler.entity.get(i);
+				entity = handler.entity.get(i);
 				
 				/*Az alábbi elágazásra azért van szükség, mert a player ami a mi gépünk az irányított
 				 karakter, az az entity listában van, és két esetet különböztetek el
@@ -56,8 +60,8 @@ public class Bomb extends Tile{
 				 a karakternek és a bombának egybevág, akkor fel kell robbanjak
 				 -Ha valamely entitás(zombi,stb) rohan bele, akkor csak azt kell megnézni , hogy ütköztek
 				 -e(majd késõbb barátságos zombik miatt kell ellenõrzést végezni)*/
-				if(en.id == Id.PLAYER){
-					Player ene = (Player)handler.entity.get(i);
+				if(entity.id == Id.PLAYER){
+					ene = (Player)handler.entity.get(i);
 					if(!(ene.networkId.equals(player.networkId)) && ene.getDamagedArea().intersects(this.damagingarea)){
 						ene.setHealth(-100);
 						/*Ez az animált támadásfelirat*/
@@ -67,12 +71,12 @@ public class Bomb extends Tile{
 						break;
 					}
 				}else{
-					Entity ene = handler.entity.get(i);
-					if(ene.getDamagedArea().intersects(this.damagingarea)){
-						ene.setHealth(-100);
+					enem = handler.entity.get(i);
+					if(enem.getDamagedArea().intersects(this.damagingarea)){
+						enem.setHealth(-100);
 						/*Ez az animált támadásfelirat*/
-						handler.damagetext.add(new DamagingText(ene.x, ene.y, String.valueOf(100),true, handler));
-						damagedEnemy = ene;/*mostmár tudjuk ki a szenvedõ fél, melyik entitás rohant bele,ezért értékül is adjuk*/
+						handler.damagetext.add(new DamagingText(enem.x, enem.y, String.valueOf(100),true, handler));
+						damagedEnemy = enem;/*mostmár tudjuk ki a szenvedõ fél, melyik entitás rohant bele,ezért értékül is adjuk*/
 						firerender = true;/*ezután elkezdõdhet az égés animûlása*/
 						break;
 					}
@@ -86,12 +90,12 @@ public class Bomb extends Tile{
 			 hogy ez a karakter tulajdonosa-e a bombának(vagy késõbb barát raktee le), mert ha nem, és
 			 beleszalad akkor sebzõdni fog.*/
 			for(int i=0;i<handler.enemies.size();i++){
-				Player ene = (Player)handler.enemies.get(i);
-				if(!(ene.networkId.equals(player.networkId)) && ene.getDamagedArea().intersects(this.damagingarea)){
-					ene.setHealth(-100);
+				enemy = (Player)handler.enemies.get(i);
+				if(!(enemy.networkId.equals(player.networkId)) && enemy.getDamagedArea().intersects(this.damagingarea)){
+					enemy.setHealth(-100);
 					/*Ez az animált támadásfelirat*/
-					handler.damagetext.add(new DamagingText(ene.x, ene.y, String.valueOf(100),true, handler));
-					damagedEnemy = ene;/*mostmár tudjuk ki a szenvedõ fél, melyik entitás rohant bele,ezért értékül is adjuk*/
+					handler.damagetext.add(new DamagingText(enemy.x, enemy.y, String.valueOf(100),true, handler));
+					damagedEnemy = enemy;/*mostmár tudjuk ki a szenvedõ fél, melyik entitás rohant bele,ezért értékül is adjuk*/
 					firerender = true;/*ezután elkezdõdhet az égés animûlása*/
 					break;
 				}

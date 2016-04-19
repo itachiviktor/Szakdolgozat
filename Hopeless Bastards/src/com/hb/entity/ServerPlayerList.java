@@ -5,6 +5,8 @@ import java.util.List;
 
 public class ServerPlayerList {
 	public List<Player> list = new ArrayList<Player>();
+	private Player en;
+	private Player p;
 	
 	public void add(Player x){
 		list.add(x);
@@ -16,7 +18,7 @@ public class ServerPlayerList {
 	}
 	
 	public Player getById(String id){
-		Player en = null;
+		en = null;
 		for(int i=0;i<list.size();i++){
 			en = list.get(i);
 			if(en.networkId.equals(id)){
@@ -28,7 +30,7 @@ public class ServerPlayerList {
 	}
 	
 	public void removeById(String id){
-		Player p = null;
+		p = null;
 		int count = 0;
 		for(int i=0;i<list.size();i++){
 			p = list.get(i);

@@ -44,10 +44,12 @@ public class Game extends Canvas implements Runnable,PropertyChangeListener{
 	/*Ez az alábbi négy érték összetartozik, azért kell belõlük 2x2, mert statikus metódusban is
 	 felszeretném használni az értékét.A bal felsõ sarokhoz képest hány pixellel az x,y iránxba tolódik el
 	 a kijelzõ.*/
-	public int BoundX = 700;
+	public int BoundX = 0;
 	public int BoundY = 0;
-	public static int BoundXS = 700;
+	public static int BoundXS = 0;
 	public static int BoundYS = 0;
+	
+	public String username;
 
 	public static  int maintime = 0;
 	/*Ez a változó a játék indítása óta eltelt másodpercet tartalmazza.Egy külön szál másopercenként eggyel növeli az értékét.

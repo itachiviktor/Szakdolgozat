@@ -23,6 +23,12 @@ public class MenuState extends GameState{
 	
 	private TextField2D textfield;
 	
+	private Point mousePoint;/*ez egy segéd referencia, hogy ne kelljen minden tick metódusban
+	új Point objektumot létrehozni,hanem ennek változtatom az értékét, és ezt adom értékül
+	a mousenak(ami Point típus egyébként.)*/
+	
+	private Point point;
+	
 	public MenuState(Game gsm) {
 		super(gsm);
 		init();
@@ -30,13 +36,62 @@ public class MenuState extends GameState{
 
 	@Override
 	public void init() {
+		textfield = new TextField2D(" ", new Font("Times New Roman",Font.BOLD,30), 10, 600, 400, Color.red,Color.blue, Color.green, Color.yellow, gsm, true);
+		
 		/*A gombok példányosítása úgy,hogy megadjuk a koordinátákat, és a nextGameState-t,hogy melyik gomb,melyik GameState-ra
 		 navigálja az alkalmazást.*/
-		startGame = new GameStateButton(Game.WIDTH/3, Game.HEIGHT/3,300,50, GameStateId.HANDLER,this,"START GAME", gsm);
+		startGame = new GameStateButton(Game.WIDTH/3, Game.HEIGHT/3,300,50, GameStateId.HANDLER,this,"START GAME", gsm){
+			@Override
+			public void tick() {
+				/*a gombot körülvevõ négyszög beállítása*/
+				setBounds(x,y,width,height);
+				
+				/*Ha a gomb területe tartalmazza az aktuális GameStatetõl lekérdezett mouse Point -ot, ami az egér hovamutatása,
+				 akkor ez azt jelenti hogy a gomb felett van az egér, azaz a heldover legyen igaz, és játtszuk le a gomb songot.*/
+				if(getBounds().contains(actualGameState.mouse)){
+					heldover = true;
+					soundplaying = true;
+				}else{
+					/*Ha az egér nincs a gomb felett akkor mindíg false-ra állítjuk a heldover értékét.*/
+					heldover = false;
+					
+				}
+				
+				if(soundplaying){
+					/*Ha a fenti kódban úgy alakult,hogy az egér a gomb felett van,akkor a sound booleant igazra álítottuk,és itt
+					 mehet a lejáttszás.*/
+					mousehover.play();
+					soundplaying = false;
+				}
+				
+				if(clicked){
+					/*Ha rákattintottak a gomra, akkor elnavigál a következõ GameStatera, azaz a listába felveszi
+					 a nextGameState objektumot, ami pl. a Start Game gombnál a Handler GameState lesz.*/
+					
+					
+					if(nextGameState == GameStateId.HANDLER){
+						gsm.states.add(new Handler(gsm));
+						if(textfield.getText() == null){
+							gsm.username = "alma";
+						}else{
+							gsm.username = textfield.getText();
+						}
+						
+					}else{
+						System.exit(0);
+					}
+					
+					clicked = false;
+				}
+			}
+		};
 		options = new GameStateButton(Game.WIDTH/3, Game.HEIGHT/3 + 100,300,50, null,this,"OPTIONS", gsm);
 		exit = new GameStateButton(Game.WIDTH/3, Game.HEIGHT/3 + 200,300,50, null,this,"EXIT", gsm);
 		
-		textfield = new TextField2D(" ", new Font("Times New Roman",Font.BOLD,30), 10, 600, 400, Color.red,Color.blue, Color.green, Color.yellow, gsm, true);
+		mousePoint = new Point();
+		point = new Point();
+		
+		
 		
 	}
 
@@ -44,7 +99,8 @@ public class MenuState extends GameState{
 	public void tick() {
 		/*Mivel itt nem mozdulhatunk ki a kivetíttett monitor koordinátarendszer nagyságából,
 		 ezért nem kell hozzáadni semmit a mouseMovedX,Y-hoz mivel az pontosan azt a helyet fogja visszaadni,ahova az egér került.*/
-		mouse = new Point(mouseMovedX,mouseMovedY);
+		mousePoint.setLocation(mouseMovedX,mouseMovedY);
+		mouse = mousePoint;
 		
 		/*A 3 gomb tick metódusát hívja.*/
 		startGame.tick();
@@ -82,9 +138,9 @@ public class MenuState extends GameState{
 		/*Ha kattintás történik meghívja a 3 gomb setClicked metódusát,ami ha az egér koordinátája,akkor
 		 aktiválja azt ami a gomb szerepe.*/
 		
-		System.out.println("click");
+		point.setLocation(e.getX(),e.getY());/*ez a megoldás is memóriaspórolás, az alábbi megoldásnak.*/
+		//Point point = new Point(e.getX(),e.getY());
 		
-		Point point = new Point(e.getX(),e.getY());
 		startGame.setClicked(point);
 		options.setClicked(point);
 		exit.setClicked(point);
@@ -149,7 +205,7 @@ public class MenuState extends GameState{
 	@Override
 	public void keyPressed(KeyEvent e) {
 		textfield.keyPressed(e);
-		System.out.println("faszomkeykey");
+		//System.out.println("faszomkeykey");
 		if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
 			System.exit(0);
 		}
