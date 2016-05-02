@@ -8,6 +8,12 @@ import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import com.hb.Game;
 import com.hb.graphics.ImageAssets;
@@ -20,8 +26,8 @@ public class MenuState extends GameState{
 	private GameStateButton startGame;
 	private GameStateButton options;
 	private GameStateButton exit;
+
 	
-	private TextField2D textfield;
 	
 	private Point mousePoint;/*ez egy segéd referencia, hogy ne kelljen minden tick metódusban
 	új Point objektumot létrehozni,hanem ennek változtatom az értékét, és ezt adom értékül
@@ -31,16 +37,20 @@ public class MenuState extends GameState{
 	
 	public MenuState(Game gsm) {
 		super(gsm);
+		warning = new Warning(100, 100, 300, 100, gsm, this);
 		init();
 	}
 
 	@Override
 	public void init() {
-		textfield = new TextField2D(" ", new Font("Times New Roman",Font.BOLD,30), 10, 600, 400, Color.red,Color.blue, Color.green, Color.yellow, gsm, true);
+		
 		
 		/*A gombok példányosítása úgy,hogy megadjuk a koordinátákat, és a nextGameState-t,hogy melyik gomb,melyik GameState-ra
 		 navigálja az alkalmazást.*/
-		startGame = new GameStateButton(Game.WIDTH/3, Game.HEIGHT/3,300,50, GameStateId.HANDLER,this,"START GAME", gsm){
+		
+		/*Úgy definiálom a gombokat, hogy a funkciót megvalósító tick metódus miatt névtelen beágyazott
+		 osztály , így ha a gomb mást csinál, mást hoz elõ, tudom személyreszabni.*/
+		startGame = new GameStateButton(Game.WIDTH/3, Game.HEIGHT/3,300,50, GameStateId.HANDLER,this,"START GAME", gsm,true){
 			@Override
 			public void tick() {
 				/*a gombot körülvevõ négyszög beállítása*/
@@ -68,25 +78,14 @@ public class MenuState extends GameState{
 					/*Ha rákattintottak a gomra, akkor elnavigál a következõ GameStatera, azaz a listába felveszi
 					 a nextGameState objektumot, ami pl. a Start Game gombnál a Handler GameState lesz.*/
 					
-					
-					if(nextGameState == GameStateId.HANDLER){
 						gsm.states.add(new Handler(gsm));
-						if(textfield.getText() == null){
-							gsm.username = "alma";
-						}else{
-							gsm.username = textfield.getText();
-						}
-						
-					}else{
-						System.exit(0);
-					}
 					
 					clicked = false;
 				}
 			}
 		};
-		options = new GameStateButton(Game.WIDTH/3, Game.HEIGHT/3 + 100,300,50, null,this,"OPTIONS", gsm);
-		exit = new GameStateButton(Game.WIDTH/3, Game.HEIGHT/3 + 200,300,50, null,this,"EXIT", gsm);
+		options = new GameStateButton(Game.WIDTH/3, Game.HEIGHT/3 + 100,300,50, null,this,"OPTIONS", gsm,true);
+		exit = new GameStateButton(Game.WIDTH/3, Game.HEIGHT/3 + 200,300,50, null,this,"EXIT", gsm,true);
 		
 		mousePoint = new Point();
 		point = new Point();
@@ -106,21 +105,22 @@ public class MenuState extends GameState{
 		startGame.tick();
 		options.tick();
 		exit.tick();
+		
+		warning.tick();
 	}
 
 	@Override
 	public void render(Graphics g) {
 		/*Háttérkép kirajzolása*/
-		g.drawImage(ImageAssets.backGround, 0, 0, Game.WIDTH,Game.HEIGHT,null);
-		
+		g.drawImage(ImageAssets.menuBackGround, 0, 0, Game.WIDTH,Game.HEIGHT,null);
 		
 		/*A 3 gomb render metódusának meghívása.*/
 		startGame.render(g);
 		options.render(g);
 		exit.render(g);
 		
-		textfield.draw(g);
-		
+		warning.render(g);
+	
 		/*Az egér démon kéz kirajzolása.*/
 		g.setColor(Color.black);
 		g.fillRect(mouse.x, mouse.y, 1, 1);
@@ -145,8 +145,7 @@ public class MenuState extends GameState{
 		options.setClicked(point);
 		exit.setClicked(point);
 		
-		textfield.mouseClicked(e);
-		
+	
 		
 		
 	}
@@ -165,7 +164,6 @@ public class MenuState extends GameState{
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		textfield.mousePressed(e);
 		
 		
 	}
@@ -173,7 +171,7 @@ public class MenuState extends GameState{
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		/*definiálva van.*/
-		textfield.mouseReleased(e);
+		
 		
 	}
 
@@ -186,7 +184,7 @@ public class MenuState extends GameState{
 		  hogy hogyha kivonom belõle.*/
 		mouseMovedX = e.getXOnScreen() - gsm.BoundX;
 		mouseMovedY = e.getYOnScreen() - gsm.BoundY;
-		textfield.mouseDragged(e);
+	
 		
 	}
 
@@ -204,8 +202,8 @@ public class MenuState extends GameState{
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		textfield.keyPressed(e);
-		//System.out.println("faszomkeykey");
+		
+		
 		if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
 			System.exit(0);
 		}

@@ -418,9 +418,9 @@ public class Handler extends GameState {
 							trade = entity.get(i);
 						}
 					}
-					/*for(int i=0;i<50;i++){
+					for(int i=0;i<150;i++){
 						addEntity(new Zombie(i*68+1000, i*68+1000, 63, 63,Id.ZOMBIE,player,Handler.this));
-					}*/
+					}
 				}catch(JSONException e){
 					e.getMessage();
 				}
@@ -491,7 +491,9 @@ public class Handler extends GameState {
 					
 						if(enemies.getById(playerId) != null){
 							Player entity = enemies.getById(playerId);
-							entity.username = data.getString("username");
+							entity.username = data.getString("username");/*ezzel a sorral állítom be a user
+							nevét a Musclemanoknak meg satöbbiknek, nem pedig kosntruktorába(így mûködik
+							amúgy pedig nem igazán akart.)*/
 							entity.x = data.getDouble("x");
 							entity.y = data.getDouble("y");
 							entity.angle = data.getDouble("angle");
@@ -538,8 +540,8 @@ public class Handler extends GameState {
 
 	private void connectSocket() {
 		try{
-			socket = IO.socket(gsm.serverURL);
-			//socket = IO.socket("http://localhost:8080");
+			//socket = IO.socket(gsm.serverURL);
+			socket = IO.socket("http://localhost:8080");
 			socket.connect();
 		}catch(Exception e){
 			e.getMessage();

@@ -19,6 +19,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFrame;
 
@@ -26,7 +28,9 @@ import org.ini4j.InvalidFileFormatException;
 import org.ini4j.Wini;
 
 import com.hb.gamestate.GameState;
+import com.hb.gamestate.LoginState;
 import com.hb.gamestate.MenuState;
+import com.hb.gamestate.Warning;
 import com.hb.graphics.ImageAssets;
 
 
@@ -37,6 +41,7 @@ public class Game extends Canvas implements Runnable,PropertyChangeListener{
 	public static int HEIGHT;
 	
 	public static JFrame frame;
+	
 	
 	public int tick = 0;
 	public int render = 0;
@@ -72,9 +77,12 @@ public class Game extends Canvas implements Runnable,PropertyChangeListener{
 	private BufferStrategy bs;
 	private Graphics g;
 	
+	
+	
 	public Game() {
 		Wini ini;
 		try {
+			/*Az ini fájl kezelése, innen olvasom ki a szervert url-t és többi konstansokat. */
 			ini = new Wini(new File("./config.ini"));
 			serverURL = ini.get("Game", "serverURL", String.class);
 	        boolean fullScreenMode = ini.get("Game", "fullScreenMode", boolean.class);
@@ -88,11 +96,11 @@ public class Game extends Canvas implements Runnable,PropertyChangeListener{
 		
 		
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();/*A képernyõ méretét kérem le*/
-		/*HEIGHT = dim.height;
-		WIDTH = dim.width;*/
+		HEIGHT = dim.height;
+		WIDTH = dim.width;
 	
-		HEIGHT = 700;
-		WIDTH = 600;
+		/*HEIGHT = 700;
+		WIDTH = 600;*/
 		
 		dim = new Dimension(WIDTH,HEIGHT);
 
@@ -104,7 +112,7 @@ public class Game extends Canvas implements Runnable,PropertyChangeListener{
 		states = new GameStateList();
 		
 		states.registToList(this);/*Property figyelõt beállítom,tehát ha a listába változás történik,ez értesül róla*/
-		states.add(new MenuState(this));/*Alapértelmezetten a fõmenü játékállás jön be,ezért a listának elõször azt adjuk elmnek*/
+		states.add(new LoginState(this));/*Alapértelmezetten a fõmenü játékállás jön be,ezért a listának elõször azt adjuk elmnek*/
 		initListeners(states.get(0));/*Ez az osztály a Canvas leszármazott, ezért csak ez az osztály tud közvetlenül figyelõket
 		beállítani rá.Viszont azt nem tudhatja,hogy a player mire mit csinál meg a gombok.Viszont a GameState az tudja, ezért
 		a GameState osztályok implementálják az összes Listenert, és ezért az aktuális GameState átadva az initListeners osztálynak
@@ -127,10 +135,19 @@ public class Game extends Canvas implements Runnable,PropertyChangeListener{
 		}
 	}
 	
+	/*Ezt nem használom.*/
 	public void deleteListeners(GameState oldstate){
 		KeyListener key = oldstate;
 		
 		removeKeyListener(key);
+		
+	}
+	
+	/*public void removeKeyListeners(){
+		removeKeyListener(arg0);
+	}*/
+	
+	public void addKeyListeners(){
 		
 	}
 	
@@ -168,6 +185,8 @@ public class Game extends Canvas implements Runnable,PropertyChangeListener{
 		addMouseMotionListener(state);
 		addMouseWheelListener(state);
 	}
+	
+	/*Ezt nem használom*/
 	private void initListeners(GameState state){
 		/*A Canvashez a paraméterben kapott GameState eseménykezelõit állítja be.*/
 		

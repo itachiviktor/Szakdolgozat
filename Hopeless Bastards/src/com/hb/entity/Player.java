@@ -45,6 +45,7 @@ public abstract class Player extends Entity{
 	public boolean dead = false;/*halott-e a player*/
 	public boolean live = true;/*él-e még a player*/
 	
+	/*A username tárolva*/
 	public String username = null;
 	
 	public ArrayList<Bullet> bullets = new ArrayList<Bullet>();/*A kilõtt golyókat tároló lista*/

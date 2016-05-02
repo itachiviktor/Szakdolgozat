@@ -242,6 +242,7 @@ public class Muscleman extends Player{
 	    		g2d.setColor(Color.green);
 	    		g2d.fillRect((int)x + 1, (int)y - 19, (int)((double)width * healthpercent), 9);	
 	    		if(this.username != null){
+	    			/*Az ellenfelek nevét kiírjuk, a sajátunkat nem.*/
 	    			g2d.drawString(this.username,(int)x +100 ,(int)y - 10);
 	    		}
 	    		

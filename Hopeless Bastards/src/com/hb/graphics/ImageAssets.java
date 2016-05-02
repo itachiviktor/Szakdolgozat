@@ -44,6 +44,7 @@ public class ImageAssets {
 	
 	public static BufferedImage image;
 	public static BufferedImage backGround;
+	public static BufferedImage menuBackGround;
 	public static BufferedImage startGameNonclicked;
 	public static BufferedImage startGameClicked;
 	public static BufferedImage witch;
@@ -149,6 +150,7 @@ public class ImageAssets {
 		try {
 			image = ImageIO.read(getClass().getResource("/level.png"));
 			backGround = ImageIO.read(getClass().getResource("/mainMenuImage.jpg"));
+			menuBackGround = ImageIO.read(getClass().getResource("/menuimage.jpg"));
 			startGameNonclicked = ImageIO.read(getClass().getResource("/startGameNonclicked.png"));
 			startGameClicked = ImageIO.read(getClass().getResource("/startGameClicked.png"));
 			witch = ImageIO.read(getClass().getResource("/kid_shoot_0002.png"));

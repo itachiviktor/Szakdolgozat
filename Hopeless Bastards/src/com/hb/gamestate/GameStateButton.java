@@ -35,17 +35,20 @@ public class GameStateButton extends Rectangle{
 	
 	public Sound mousehover;
 	
+	public boolean movingButton;/*Ez a változó mondja meg azt, hogy az adott gomb mozgó vagy sem.
+	Mozgó azt jelenti, hogy ha felé visszük az egeret elmozdul.*/
+	
 	public boolean initialized = false;
 	public boolean soundplaying = false;/*Alapértelmezetten ne játsza le a gomb soundot*/
 	
 	/*Az alábbi fontrendereres holmik azért kellenek,hogy formázott szöveget tudjunk kirajzolni a képernyõre.*/
 	public FontRenderContext frc;
 	
-	public Font fontstyle = new Font("Arial",Font.PLAIN,25);
+	public Font fontstyle;
 	public String text;
 	public TextLayout visualizer;/*megjelenítõ*/
 	
-	public GameStateButton(int x,int y,int width,int height,GameStateId nextGameState,GameState actualGameState,String text,Game gsm) {
+	public GameStateButton(int x,int y,int width,int height,GameStateId nextGameState,GameState actualGameState,String text,Game gsm,boolean movingButton) {
 		this.actualGameState = actualGameState;
 		//this.nextGamestate = nextGamestate;
 		this.nextGameState = nextGameState;
@@ -55,6 +58,9 @@ public class GameStateButton extends Rectangle{
 		this.width = width;
 		this.height = height;
 		this.text = text;
+		this.movingButton = movingButton;
+		/*a betûméretet dinamikusan határozom meg a gombméret magasságának viszonylatában.*/
+		fontstyle = new Font("Arial",Font.PLAIN,height-6);
 		setBounds(x,y,width,height);
 		mousehover = new Sound("/buttonhover.wav");
 		
@@ -98,9 +104,10 @@ public class GameStateButton extends Rectangle{
 	}
 	
 	public void render(Graphics g){
+		
 		if(!heldover){
 			/*Ha a gomb felé vittük az egeret,akkor */
-			g.drawImage(ImageAssets.startGameNonclicked, x , y,300,50,null);
+			g.drawImage(ImageAssets.startGameNonclicked, x , y,this.width,this.height,null);
 			
 			/*Az initialized booleannak az a szerepe,hogy ha ez a változó hamis,akkor az frc objektumnak meg kell adni
 			  a graphics getFontRenderContextusát, viszont ezt elég egyszer, ezért nem kell minden render meghíváskor
@@ -113,21 +120,40 @@ public class GameStateButton extends Rectangle{
 				initialized = true;
 			}
 			g.setColor(new Color(207,208,210));
-			visualizer.draw((Graphics2D) g, x + 2, y + 33);
+			/*Ezzel rajzoljuk ki a szöveget a gombra, viszont itt mérettõl függöen kell állítani,
+			 a szöveg pontja az elsõ betû bal alsó sarka.Azt kell valahogy kiszámolni méretarányosan.
+			 */
+			visualizer.draw((Graphics2D) g, x + 2, y + height - 3);
 
 		}else{
+			/*Tehát ha az egérgombot a gomb felé visszük, akkor csak akkor mozog el, ha ez
+			 mozgógombként van definiálva.*/
 			
-			g.drawImage(ImageAssets.startGameClicked, x + 20, y,300,50,null);
-			if(!initialized){
-				frc = ((Graphics2D) g).getFontRenderContext();
-				visualizer = new TextLayout(text,fontstyle,frc);
-				initialized = true;
-			}
 			
-			g.setColor(new Color(28,32,35));
-			visualizer.draw((Graphics2D) g, x + 2 + 20, y + 33);
-			
-			heldover = false;			
+			/*Ha mozgógomb van akkor x mentén 20-val elmozdítjuk ha egélrgomb felette vcan.*/
+				if(movingButton){
+					g.drawImage(ImageAssets.startGameClicked, x + 20, y,this.width,this.height,null);
+				}else{
+					g.drawImage(ImageAssets.startGameClicked, x, y,this.width,this.height,null);
+				}
+				
+				if(!initialized){
+					frc = ((Graphics2D) g).getFontRenderContext();
+					visualizer = new TextLayout(text,fontstyle,frc);
+					initialized = true;
+				}
+				
+				g.setColor(new Color(28,32,35));
+				
+				/*Ha mozgógomb van akkor x mentén 20-val elmozdítjuk ha egélrgomb felette vcan.*/
+				if(movingButton){
+					visualizer.draw((Graphics2D) g, x + 2 + 20, y + height - 3);
+				}else{
+					visualizer.draw((Graphics2D) g, x + 2, y + height - 3);
+				}
+				
+				
+				heldover = false;			
 		}
 	}
 
@@ -145,7 +171,7 @@ public class GameStateButton extends Rectangle{
 
 	public void setClicked(Point point) {
 		/*Ez beállítja a clicked booleant.A kapott pontról eldönti,hogy rajta van-e a gombkockán.Ez a paraméterként kapott 
-		 Point objektum majd mindíg az egérkurzor koordinátája lesz.*/
+		 Point objektum majd mindig az egérkurzor koordinátája lesz.*/
 		if(getBounds().contains(point)){
 			clicked = true;
 		}else{

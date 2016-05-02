@@ -17,5 +17,6 @@
 	<classpathentry kind="lib" path="C:/Users/Kiss/Desktop/lib/socket.io-client-0.7.0.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Kiss/Desktop/ini4j-0.5.4/ini4j-0.5.4.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Kiss/Desktop/ini4j-0.5.4/ini4j-0.5.4-jdk14.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Kiss/Desktop/lib/mysql-connector-java-5.1.38-bin.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

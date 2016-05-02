@@ -23,6 +23,12 @@ public abstract class GameState implements MouseListener, MouseMotionListener, M
 	
 	public Point mouse = new Point(0,0);/*Az egér melyik pontra mutat*/
 	
+	/*Minden gamestatenak van egy warning joptionpanehez hasonló eszköze.A boolean azt mutatja, hogy
+	 kikell-e rajzolni a figyelmeztetést vagy sem.Ha warning van, akkor semmi más eseményre nem 
+	 reagálunk, csak a warning elfogadás gombjára.*/
+	public Warning warning;
+	public boolean isWarningSituation = false;
+	
 	public GameState(Game gsm) {
 		this.gsm = gsm;
 
