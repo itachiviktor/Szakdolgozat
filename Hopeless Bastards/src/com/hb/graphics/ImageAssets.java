@@ -41,6 +41,8 @@ public class ImageAssets {
 	public static Sprite[] musclemanskillimages = new Sprite[7];
 	public static Sprite musclemantrap;
 	public static Sprite[] musclemantrapfire = new Sprite[9];
+	public static Sprite[] mage = new Sprite[3];
+	public static Sprite[] mageIceBlock = new Sprite[15];
 	
 	public static BufferedImage image;
 	public static BufferedImage backGround;
@@ -112,6 +114,20 @@ public class ImageAssets {
 		
 		for(int i=0;i<7;i++){
 			muscleman[i] = new Sprite(skills64, i+1, 11, 64,64);
+		}
+		
+		for(int i=0;i<3;i++){
+			mage[i] = new Sprite(skills64,i+1,3,64,64);
+		}
+		
+		for(int i=0;i<10;i++){
+			mageIceBlock[i] = new Sprite(skills128,i+1,3,128,128);
+		}
+		
+		int j = 0;
+		for(int i=10;i<15;i++){
+			mageIceBlock[i] = new Sprite(skills128,j+1,4,128,128);
+			j++;
 		}
 		
 		for(int i=0;i<6;i++){

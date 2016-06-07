@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import com.hb.Game;
+import com.hb.entity.CharacterType;
 import com.hb.graphics.ImageAssets;
 import com.hb.textfield.TextField2D;
 
@@ -50,7 +51,7 @@ public class MenuState extends GameState{
 		
 		/*Úgy definiálom a gombokat, hogy a funkciót megvalósító tick metódus miatt névtelen beágyazott
 		 osztály , így ha a gomb mást csinál, mást hoz elõ, tudom személyreszabni.*/
-		startGame = new GameStateButton(Game.WIDTH/3, Game.HEIGHT/3,300,50, GameStateId.HANDLER,this,"START GAME", gsm,true){
+		startGame = new GameStateButton(Game.WIDTH/3, Game.HEIGHT/3,300,50, GameStateId.HANDLER,this,"MAGE", gsm,true){
 			@Override
 			public void tick() {
 				/*a gombot körülvevõ négyszög beállítása*/
@@ -77,20 +78,51 @@ public class MenuState extends GameState{
 				if(clicked){
 					/*Ha rákattintottak a gomra, akkor elnavigál a következõ GameStatera, azaz a listába felveszi
 					 a nextGameState objektumot, ami pl. a Start Game gombnál a Handler GameState lesz.*/
-					
+						gsm.charactertype = CharacterType.MAGE;
 						gsm.states.add(new Handler(gsm));
 					
 					clicked = false;
 				}
 			}
 		};
-		options = new GameStateButton(Game.WIDTH/3, Game.HEIGHT/3 + 100,300,50, null,this,"OPTIONS", gsm,true);
+		options = new GameStateButton(Game.WIDTH/3, Game.HEIGHT/3 + 100,300,50, null,this,"MUSCLEMAN", gsm,true){
+			@Override
+			public void tick() {
+				/*a gombot körülvevõ négyszög beállítása*/
+				setBounds(x,y,width,height);
+				
+				/*Ha a gomb területe tartalmazza az aktuális GameStatetõl lekérdezett mouse Point -ot, ami az egér hovamutatása,
+				 akkor ez azt jelenti hogy a gomb felett van az egér, azaz a heldover legyen igaz, és játtszuk le a gomb songot.*/
+				if(getBounds().contains(actualGameState.mouse)){
+					heldover = true;
+					soundplaying = true;
+				}else{
+					/*Ha az egér nincs a gomb felett akkor mindíg false-ra állítjuk a heldover értékét.*/
+					heldover = false;
+					
+				}
+				
+				if(soundplaying){
+					/*Ha a fenti kódban úgy alakult,hogy az egér a gomb felett van,akkor a sound booleant igazra álítottuk,és itt
+					 mehet a lejáttszás.*/
+					mousehover.play();
+					soundplaying = false;
+				}
+				
+				if(clicked){
+					/*Ha rákattintottak a gomra, akkor elnavigál a következõ GameStatera, azaz a listába felveszi
+					 a nextGameState objektumot, ami pl. a Start Game gombnál a Handler GameState lesz.*/
+						gsm.charactertype = CharacterType.MUSCLEMAN;
+						gsm.states.add(new Handler(gsm));
+					
+					clicked = false;
+				}
+			}
+		};
 		exit = new GameStateButton(Game.WIDTH/3, Game.HEIGHT/3 + 200,300,50, null,this,"EXIT", gsm,true);
 		
 		mousePoint = new Point();
 		point = new Point();
-		
-		
 		
 	}
 

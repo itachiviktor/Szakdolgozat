@@ -30,6 +30,7 @@ public class Skill0 extends AbstractSkill{
 	/*Ez a metódus hívódik meg aktiváláskor.*/
 	@Override
 	public void activateSkill() {
+		
 		/*Csak akkor aktiválódik a bombalerakás skill, ha a jelenlegi játékidõ nagyobb,mint a skillkezdés és a skillcd idõ
 		 összeadva, azaz ha lejárt a cd,csak akkor aktiválhatom újra a skillt.Illetve hs a skillstartedtime == 0, az azt jelenti
 		 hogy mióta megy a játék,azaz inicializálva lett a skill, azóta még nem volt használva,tehát cd sem lehet rajta.*/

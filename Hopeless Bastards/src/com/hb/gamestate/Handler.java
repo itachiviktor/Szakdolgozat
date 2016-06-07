@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import com.hb.Camera;
 import com.hb.Game;
 import com.hb.Id;
+import com.hb.entity.CharacterType;
 import com.hb.entity.DamagingText;
 import com.hb.entity.Entity;
 import com.hb.entity.EntityList;
@@ -30,6 +31,7 @@ import com.hb.gamestate.GameState;
 import com.hb.graphics.ImageAssets;
 import com.hb.items.HealthPotion;
 import com.hb.items.ManaPotion;
+import com.hb.mage.Mage;
 import com.hb.textfield.TextField2D;
 import com.hb.tile.Tile;
 import com.hb.tile.Wall;
@@ -403,8 +405,12 @@ public class Handler extends GameState {
 				try{
 					System.out.println("socketid");
 					String id = data.getString("id");
+					if(gsm.charactertype == CharacterType.MAGE){
+						addEntity(new Mage(1600,1600,63,63,Id.PLAYER,id,Handler.this));
+					}else if(gsm.charactertype == CharacterType.MUSCLEMAN){
+						addEntity(new Muscleman(1600,1600,63,63,Id.PLAYER,id,Handler.this));
+					}
 					
-					addEntity(new Muscleman(1600,1600,63,63,Id.PLAYER,id,Handler.this));
 					addTile(new Wall(25*64,25*64,64,64,false,Id.WALL,WallType.FOLD,Handler.this));
 					for(int i=0;i<entity.size();i++){
 						if(entity.get(i).getId() == Id.PLAYER){
@@ -418,9 +424,9 @@ public class Handler extends GameState {
 							trade = entity.get(i);
 						}
 					}
-					for(int i=0;i<150;i++){
+					/*for(int i=0;i<150;i++){
 						addEntity(new Zombie(i*68+1000, i*68+1000, 63, 63,Id.ZOMBIE,player,Handler.this));
-					}
+					}*/
 				}catch(JSONException e){
 					e.getMessage();
 				}
@@ -433,9 +439,13 @@ public class Handler extends GameState {
 				try{
 					System.out.println("newPlayer");
 					String playerId = data.getString("id");
-					
+					String charType = data.getString("characterType");
 					if(!playerId.equals(player.networkId)){
-						enemies.add(new Muscleman(25*63,25*63, 63, 63, Id.ENEMYPLAYER, playerId, Handler.this));
+						if(charType.equals("MUSCLEMAN")){
+							enemies.add(new Muscleman(25*63,25*63, 63, 63, Id.ENEMYPLAYER, playerId, Handler.this));
+						}else if(charType.equals("MAGE")){
+							enemies.add(new Mage(25*63,25*63, 63, 63, Id.ENEMYPLAYER, playerId, Handler.this));
+						}
 					}
 					
 				}catch(JSONException e){
@@ -470,9 +480,13 @@ public class Handler extends GameState {
 						double x = objects.getJSONObject(i).getDouble("x");
 						double y = objects.getJSONObject(i).getDouble("y");
 						
+						String charType = objects.getJSONObject(i).getString("characterType");
+						if(charType.equals("MUSCLEMAN")){
+							enemies.add(new Muscleman(x, y, 63, 63, Id.ENEMYPLAYER, id, Handler.this));
+						}else if(charType.equals("MAGE")){
+							enemies.add(new Mage(x, y, 63, 63, Id.ENEMYPLAYER, id, Handler.this));
+						}
 						
-						System.out.println("getPlayers");
-						enemies.add(new Muscleman(x, y, 63, 63, Id.ENEMYPLAYER, id, Handler.this));
 						
 					}
 				}catch(JSONException e){

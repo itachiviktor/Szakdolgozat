@@ -18,6 +18,7 @@ import com.hb.Collision;
 import com.hb.Game;
 import com.hb.Id;
 import com.hb.entity.Bolt;
+import com.hb.entity.CharacterType;
 import com.hb.entity.DamagingText;
 import com.hb.entity.Player;
 import com.hb.gamestate.Handler;
@@ -45,6 +46,8 @@ public class Muscleman extends Player{
 	
 	private Point locationOnScreen;
 	
+	private CharacterType characterType = CharacterType.MUSCLEMAN;
+	
 	
 	
 	public Muscleman(double x, double y, int width, int height, Id id,String networkId, Handler handler) {
@@ -60,17 +63,16 @@ public class Muscleman extends Player{
 		px = polygon.xpoints[0];
 		py = polygon.ypoints[0];
 		
-		skills[0] = new Skill0(this);/*trap*/
-		skills[1] = new Skill1(this);/*buff*/
-		skills[2] = new Skill2(this);/*jump back*/
-		skills[3] = new Skill3(this);/*speed rise*/
-		skills[4] = new Skill4(this);/*oseshot*/
-		skills[5] = new Skill5(this);/*doubleshot*/
-		skills[6] = new Skill6(this);/*explosion*/
+		skills[0] = new com.hg.muscleman.Skill0(this);/*trap*/
+		skills[1] = new com.hg.muscleman.Skill1(this);/*buff*/
+		skills[2] = new com.hg.muscleman.Skill2(this);/*jump back*/
+		skills[3] = new com.hg.muscleman.Skill3(this);/*speed rise*/
+		skills[4] = new com.hg.muscleman.Skill4(this);/*oseshot*/
+		skills[5] = new com.hg.muscleman.Skill5(this);/*doubleshot*/
+		skills[6] = new com.hg.muscleman.Skill6(this);/*explosion*/
 		
 		bolt = new Bolt(handler, this);
 		
-	
 	}
 	
 	 public void setAngle(int aa) {
@@ -478,6 +480,7 @@ public class Muscleman extends Player{
 					
 					data.put("id",this.networkId);
 					data.put("username", handler.gsm.username);
+					data.put("characterType", "MUSCLEMAN");
 					data.put("x", this.x);
 					data.put("y", this.y);
 					data.put("angle",this.angle);
