@@ -37,9 +37,9 @@ public class Game extends Canvas implements Runnable,PropertyChangeListener{
 	/*Ez az alábbi négy érték összetartozik, azért kell belõlük 2x2, mert statikus metódusban is
 	 felszeretném használni az értékét.A bal felsõ sarokhoz képest hány pixellel az x,y iránxba tolódik el
 	 a kijelzõ.*/
-	public int BoundX = 700;
+	public int BoundX = 0;
 	public int BoundY = 0;
-	public static int BoundXS = 700;
+	public static int BoundXS = 0;
 	public static int BoundYS = 0;
 	
 	public String username;
@@ -93,15 +93,12 @@ public class Game extends Canvas implements Runnable,PropertyChangeListener{
         
 		
 		
-		
-		
-		
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();/*A képernyõ méretét kérem le*/
-		/*HEIGHT = dim.height;
-		WIDTH = dim.width;*/
+		HEIGHT = dim.height;
+		WIDTH = dim.width;
 	
-		HEIGHT = 700;
-		WIDTH = 600;
+		/*HEIGHT = 700;
+		WIDTH = 600;*/
 		
 		dim = new Dimension(WIDTH,HEIGHT);
 

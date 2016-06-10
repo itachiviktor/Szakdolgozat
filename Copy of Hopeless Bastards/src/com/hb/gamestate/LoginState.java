@@ -15,6 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.hb.Game;
+import com.hb.Sound;
 import com.hb.graphics.ImageAssets;
 import com.hb.textfield.TextField2D;
 
@@ -25,9 +26,7 @@ public class LoginState extends GameState{
 	
 	private GameStateButton login;
 	
-	
 	private GameStateButton admin;
-	
 	
 	private Point mousePoint;/*ez egy segéd referencia, hogy ne kelljen minden tick metódusban
 	új Point objektumot létrehozni,hanem ennek változtatom az értékét, és ezt adom értékül
@@ -35,10 +34,14 @@ public class LoginState extends GameState{
 	
 	private Point point;
 	
+	private Sound loginSong;
 	
 	public LoginState(Game gsm) {
 		super(gsm);
 		warning = new Warning(100, 100, 300, 300, gsm, LoginState.this,ImageAssets.warningWindow,"Invalid account!");
+		
+		this.loginSong = new Sound("/Warcraft.wav");
+		this.loginSong.play();
 		
 		init();
 	}
@@ -70,14 +73,12 @@ public class LoginState extends GameState{
 	@Override
 	public void mouseExited(MouseEvent arg0) {
 	
-		
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
 		username.mousePressed(e);
 		password.mousePressed(e);
-		
 	}
 
 	@Override
@@ -182,6 +183,7 @@ public class LoginState extends GameState{
 					System.out.println("alma");
 					if(nextGameState == GameStateId.MENUSTATE){
 						gsm.username = "admin";
+						LoginState.this.loginSong.close();
 						gsm.states.add(new MenuState(gsm));
 						clicked = false;
 					}
